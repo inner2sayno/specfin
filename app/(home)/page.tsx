@@ -1,23 +1,19 @@
-import InvestmentCarousel from "@/components/layout/InvestmentCarousel";
-import AchievementSection from "./components/AchievementSection";
-import BenefitSection from "./components/BenefitSection";
 import HeroSection from "./components/HeroSection";
-import HowToStartInvestSection from "./components/HowToStartInvestSection";
-import InvestSection from "./components/InvestSection";
 import PartnerSection from "./components/PartnerSection";
-import QuestionSection from "./components/QuestionSection";
+import AchievementSection from "./components/AchievementSection";
 import WhyChooseUsSection from "./components/WhyChooseUsSection";
+import InvestSection from "./components/InvestSection";
+import HowToStartInvestSection from "./components/HowToStartInvestSection";
+import QuestionSection from "./components/QuestionSection";
 
 export default function Home() {
   return (
     <>
       <HeroSection />
       <PartnerSection />
-      <BenefitSection />
-      <WhyChooseUsSection />
       <AchievementSection />
+      <WhyChooseUsSection />
       <InvestSection />
-      <InvestmentCarousel />
       <HowToStartInvestSection />
       <QuestionSection />
     </>
