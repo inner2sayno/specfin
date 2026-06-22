@@ -13,7 +13,7 @@ const COLS = {
     { label: "About Us", href: "/about" },
     { label: "Our Team", href: "/about" },
     { label: "Careers", href: "/careers" },
-    { label: "Press & Media", href: "/press" },
+    { label: "Press and Media", href: "/press" },
     { label: "Contact Us", href: "/contact" },
   ],
   Legal: [
@@ -34,9 +34,9 @@ export default function Footer() {
             <Image src="/logo/logo-white.png" alt="Specfin Technologies" width={110} height={32} className="h-8 w-auto mb-4" />
           </Link>
           <p className="text-[13px] text-white/40 leading-relaxed mb-4 max-w-[260px]">
-            Institutional hybrid investment platform. Traditional Finance meets Decentralized Finance — one unified dashboard for cash and crypto investors.
+            Institutional hybrid investment platform. Traditional Finance meets Decentralized Finance.
           </p>
-          <p className="text-[11px] text-white/20">Powered by Spectra Protocol · Prism AGI</p>
+          <p className="text-[11px] text-white/20">Powered by Spectra Protocol</p>
         </div>
         {Object.entries(COLS).map(([title, links]) => (
           <div key={title}>
@@ -52,8 +52,8 @@ export default function Footer() {
         ))}
       </div>
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <p className="text-[12px] text-white/25">© 2025 Specfin Technologies · Ark Global Co. · All rights reserved.</p>
-        <p className="text-[12px] text-white/25 text-center">Accredited investors only · Not financial advice · Past performance is not indicative of future results</p>
+        <p className="text-[12px] text-white/25">2025 Specfin Technologies · Ark Global Co. · All rights reserved.</p>
+        <p className="text-[12px] text-white/25 text-center">Accredited investors only · Not financial advice</p>
       </div>
     </footer>
   );
