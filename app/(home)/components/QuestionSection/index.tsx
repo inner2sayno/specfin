@@ -2,124 +2,72 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaPlus, FaMinus } from "react-icons/fa";
 
-interface FAQItem {
-  question: string;
-  answer: string;
-}
+const FAQS = [
+  {
+    q: "What is Specfin Technologies?",
+    a: "Specfin Technologies is a hybrid investment platform giving accredited investors access to institutional-grade hedge fund strategies and tokenized real-world assets. Cash investors deposit KRW or USD via bank transfer. Crypto investors connect Web3 wallets to deposit USDT or USDC directly. Both investor types access the same opportunities through one unified dashboard.",
+  },
+  {
+    q: "How do I invest using USDT or USDC?",
+    a: "Connect your Web3 wallet — MetaMask, Phantom, Coinbase, or any WalletConnect-compatible wallet — on the Join page. Select an investment opportunity, enter your USDT/USDC amount, and approve the smart contract transaction. Your position is recorded on-chain instantly and visible in your dashboard.",
+  },
+  {
+    q: "How do I invest using KRW or USD?",
+    a: "Register with your email address and complete KYC verification. Once verified, you can deposit via bank transfer. The platform manages the internal conversion to stablecoins for trading purposes — your dashboard always shows your balance in KRW or USD.",
+  },
+  {
+    q: "What is the Spectra token and why should I hold it?",
+    a: "Spectra (SPCR) is the Specfin platform utility token. Holding it reduces your performance fee: standard investors pay 30%, Silver tier (1,000+ SPCR) pay 20%, and Gold tier (10,000+ SPCR) pay just 10–15%. Spectra holders also get early access to high-demand RWA listings, VIP-only trading strategies, and priority allocation on new investment rounds.",
+  },
+  {
+    q: "What real-world assets can I invest in through Specfin?",
+    a: "Phase 1 (now): hedge fund strategies and verified token sales. Phase 2 (launching with licensed Korean securities firm partners): fractional commercial real estate in Seoul, blue-chip art and collectibles, whiskey cask collections, and music copyright royalties — all as fractional tradeable tokens with secondary market liquidity.",
+  },
+];
 
 export default function QuestionSection() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
-  const faqs: FAQItem[] = [
-    {
-      question: "What are startup investments?",
-      answer:
-        "Startup investments involve providing capital to early-stage or growing companies in return for equity or ownership interest. This funding plays a vital role in helping startups scale their business, develop products, and support day-to-day operations. In exchange, investors aim to generate returns when the startup grows successfully and reaches a liquidity event such as an acquisition or IPO.",
-    },
-    {
-      question: "Are startups worth investing in?",
-      answer:
-        "Startup investing has the potential to generate significantly higher long-term returns compared to traditional public markets. However, it also carries substantial risk and uncertainty. Whether startup investments are suitable for you depends on factors such as your risk appetite, financial goals, expected returns, and the fundamentals of the specific startup you are considering.",
-    },
-    {
-      question: "How do people invest in startups?",
-      answer:
-        "Investors can access startups through several channels, including direct equity purchases, convertible notes or SAFEs, equity crowdfunding platforms, or venture capital funds. Typically, startups do not accept small investments (under $100,000) from individuals without a direct relationship with the founders. Regulatory bodies such as the SEC restrict direct startup investments to accredited investors.\nSPECFIN opens the door to startup investing by offering access through individual startup deals, diversified funds, or pre-funded investment accounts.",
-    },
-    {
-      question: "How do I find quality startups to invest in?",
-      answer:
-        "Identifying promising startups requires extensive research and careful due diligence. At SPECFIN, we handle this process for you. By visiting our Opportunities page, you can explore startups currently raising capital. Each listing includes comprehensive investor information and our exclusive “Our Take” analysis, enabling you to evaluate opportunities efficiently. Please note that investing through SPECFIN is available only to accredited investors.",
-    },
-    {
-      question: "How do I begin investing in startups?",
-      answer:
-        "Create a free SPECFIN account to unlock platform features (for accredited investors).Review available investment opportunities using our detailed insights and analyses.Select a startup and click the green Invest button on its page to proceed.Our Investor Relations team will assist you throughout the process and keep you informed with regular updates to help you track and manage your portfolio.",
-    },
-  ];
-
-  const toggleQuestion = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="relative w-full py-12 sm:py-16 lg:py-20 bg-[#1E1E1E]">
-      <div className="w-full max-w-360 mx-auto px-5 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <h2
-            className="text-[26px] sm:text-[29px] md:text-[32px] lg:text-[35px] font-bold"
-            style={{
-              background:
-                "var(--gradient, linear-gradient(90deg, #60A5E0 0%, #36E8CA 100%))",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}>
-            Frequent Questions From Our Users
-          </h2>
-        </div>
+    <section className="relative w-full bg-[#060C3C]/60 border-t border-[#36E8CA]/10 py-16">
+      <div className="max-w-3xl mx-auto px-6">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-[32px] lg:text-[38px] font-bold text-white text-center mb-12"
+        >
+          Frequently asked questions
+        </motion.h2>
 
-        <div className="mx-auto">
-          {faqs.map((faq, index) => {
-            const isExpanded = expandedIndex === index;
-
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}>
-                <button
-                  onClick={() => toggleQuestion(index)}
-                  className="w-full flex items-center justify-between py-4 sm:py-5 lg:py-6 text-left hover:opacity-80 transition-opacity duration-200"
-                  aria-expanded={isExpanded}
-                  aria-controls={`faq-answer-${index}`}>
-                  <span className="text-[14px] sm:text-[16px] lg:text-[18px] font-bold text-white pr-4">
-                    {faq.question}
-                  </span>
-
-                  <div className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 flex items-center justify-center">
-                    <motion.div
-                      initial={false}
-                      animate={{ rotate: isExpanded ? 0 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="text-white">
-                      {isExpanded ? (
-                        <FaMinus className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-                      ) : (
-                        <FaPlus className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-                      )}
-                    </motion.div>
-                  </div>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <motion.div
-                      id={`faq-answer-${index}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden">
-                      <div className="pb-4 sm:pb-5 lg:pb-6 pr-12 sm:pr-14 lg:pr-16">
-                        <p className="text-base sm:text-lg lg:text-xl text-white/80 leading-relaxed">
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {index < faqs.length - 1 && (
-                  <div className="h-px bg-white/20 w-full" />
+        <div className="space-y-0">
+          {FAQS.map((item, i) => (
+            <div key={i} className="border-b border-[#36E8CA]/10">
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full flex justify-between items-center py-5 text-left gap-4"
+              >
+                <span className="text-[16px] font-semibold text-white">{item.q}</span>
+                <span className={`w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-full border text-[18px] transition-all duration-200 ${open === i ? "bg-[#36E8CA] border-[#36E8CA] text-[#060C3C] rotate-45" : "bg-[#36E8CA]/10 border-[#36E8CA]/30 text-[#36E8CA]"}`}>
+                  +
+                </span>
+              </button>
+              <AnimatePresence>
+                {open === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="text-[15px] text-[#9FB6D0] leading-[1.7] pb-5">{item.a}</p>
+                  </motion.div>
                 )}
-              </motion.div>
-            );
-          })}
+              </AnimatePresence>
+            </div>
+          ))}
         </div>
       </div>
     </section>
