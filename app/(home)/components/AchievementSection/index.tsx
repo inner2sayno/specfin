@@ -13,34 +13,23 @@ export default function AchievementSection() {
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <p className="text-[11px] font-bold text-[#36E8CA] tracking-[0.18em] uppercase mb-3">
-              Now accepting applications
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <p className="text-[11px] font-bold text-[#36E8CA] tracking-[0.18em] uppercase mb-3">Now accepting applications</p>
             <h2 className="text-[28px] lg:text-[34px] font-bold text-white mb-4 leading-tight">
-              Accepting investor applications<br />for Phase 1
+              Accepting investor applications for Phase 1
             </h2>
             <p className="text-[16px] text-[#9FB6D0] max-w-lg leading-relaxed">
-              Specfin Technologies is currently onboarding accredited investors for our Hybrid Hedge Fund Platform. Join the waitlist to secure early access and receive priority allocation.
+              Specfin Technologies is currently onboarding accredited investors for our Hybrid Hedge Fund Platform. Join the waitlist to secure early access.
             </p>
           </motion.div>
         </div>
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="flex flex-col gap-4 lg:items-start"
-        >
-          <Link
-            href="/connect-wallet"
-            className="inline-flex items-center justify-center px-8 py-4 rounded-md text-[15px] font-bold bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#060C3C] hover:opacity-90 transition"
-          >
+        <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex flex-col gap-4 lg:items-start">
+          <Link href="/connect-wallet" className="inline-flex items-center justify-center px-8 py-4 rounded-md text-[15px] font-bold bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#060C3C] hover:opacity-90 transition">
             Apply for early access
           </Link>
-          <p className="text-[12px] text-[#9FB6D0]">Accredited investors only · KYC required</p>
+          <p className="text-[12px] text-[#9FB6D0]">Accredited investors only</p>
         </motion.div>
       </div>
     </section>
   );
-}
+                                                                    }
