@@ -1,131 +1,49 @@
 "use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { FiMoreVertical } from "react-icons/fi";
+import { NEWS_ARTICLES } from "@/lib/specfinData";
 
-interface NewsArticleProps {
-  thumbnail: string;
-  headline: string;
-  source: string;
-  timeAgo: string;
-  readTime: string;
-  companyTag: string;
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function NewsArticle({
-  thumbnail,
-  headline,
-  source,
-  timeAgo,
-  readTime,
-  companyTag,
-}: NewsArticleProps) {
+function NewsCard({ article }: { article: typeof NEWS_ARTICLES[0] }) {
   return (
-    <div className="group relative flex items-stretch gap-6 rounded-[18px] border border-white/60 bg-gradient-to-br from-[#1E1E1E] to-[#2B2B2B] p-5 transition-all duration-300 hover:border-white hover:shadow-2xl min-h-[170px]">
-      <button
-        type="button"
-        className="absolute right-5 top-5 z-10 rounded-full p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-        aria-label="More options">
-        <FiMoreVertical className="h-5 w-5" />
-      </button>
-
-      <div className="relative w-56 shrink-0 overflow-hidden rounded-l-[18px] rounded-r-none md:w-64">
-        <Image
-          src={thumbnail}
-          alt={headline}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 220px, 260px"
-          priority
-        />
+    <div className="flex flex-col sm:flex-row items-start gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/20 hover:bg-white/[0.05] transition-all cursor-pointer">
+      <div className="w-full sm:w-28 flex-shrink-0 h-16 rounded-lg overflow-hidden bg-white/[0.06] flex items-center justify-center">
+        <span style={{ color: article.categoryColor }} className="text-2xl font-bold opacity-40">S</span>
       </div>
-
-      <div className="flex flex-1 flex-col justify-between">
-        <div>
-          <h3 className="text-lg font-semibold leading-snug text-white">
-            {headline}
-          </h3>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-          <div className="flex item-center gap-5 text-sm text-white/70 space-y-1">
-            <p>{source}</p>
-            <p>{timeAgo}</p>
-            <p>{readTime}</p>
-          </div>
-          <span className="w-47.5 py-3 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#60A5E0] to-[#36E8CA] px-4  text-xs font-semibold text-[#FFF]">
-            {companyTag}
+      <div className="flex-1 flex flex-col gap-1.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded" style={{ color: article.categoryColor, backgroundColor: article.categoryColor + '20' }}>
+            {article.category}
           </span>
+          <span className="text-[11px] text-[#9fb6d0]">{article.readTime} · {formatDate(article.date)}</span>
         </div>
+        <h3 className="text-[14px] font-semibold text-white leading-snug">{article.title}</h3>
+        <p className="text-[12px] text-[#9fb6d0] leading-relaxed line-clamp-2">{article.excerpt}</p>
+        <p className="text-[11px] text-[#9fb6d0]/60">By {article.author}</p>
       </div>
     </div>
   );
 }
 
 export default function PortfolioNewsSection() {
-  const newsArticles = [
-    {
-      thumbnail: "/dashboard/visual.png",
-      headline:
-        "Lambda doubles down on Midwest expansion, to build AI factory in Kansas City, MO",
-      source: "PR Newswire",
-      timeAgo: "5 days ago",
-      readTime: "3 min read",
-      companyTag: "Lambda (lambda.ai)",
-    },
-    {
-      thumbnail: "/dashboard/growth.png",
-      headline:
-        "Dani Cherkassky, CEO and Co-Founder of Kardome - Interview Series",
-      source: "Unite.Ai",
-      timeAgo: "5 days ago",
-      readTime: "3 min read",
-      companyTag: "Kardome",
-    },
-    {
-      thumbnail: "/dashboard/analytics.png",
-      headline:
-        "IQM collaborates with NVIDIA on NVQLink to enable scalable quantum error correction",
-      source: "IQM",
-      timeAgo: "5 days ago",
-      readTime: "3 min read",
-      companyTag: "IQM",
-    },
-  ];
-
+  const latest = NEWS_ARTICLES.slice(0, 4);
   return (
-    <section className="w-full bg-[#05010F] py-8">
-      <div className="mx-auto flex w-full flex-col gap-6 px-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-bold text-[#60A5E0]">
-              Portfolio News
-            </h2>
-            <p className="text-base text-white/80">
-              Up to the minute coverage of OurCrowd&apos;s portfolio companies
-              and alternative investment opportunities
-            </p>
+    <section className="w-full bg-[#030812] border-t border-white/5 py-10">
+      <div className="mx-auto flex w-full flex-col gap-6 px-4 lg:px-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[22px] font-bold text-white">Portfolio news & insights</h2>
+            <p className="text-[13px] text-[#9fb6d0] mt-0.5">Latest updates from Specfin, fund managers, and the market</p>
           </div>
-          <Link
-            href="/news"
-            className="ml-auto text-base font-semibold text-[#60A5E0] transition-colors duration-200 hover:text-[#36E8CA]">
-            See all
+          <Link href="/dashboard/news" className="text-[13px] font-semibold text-[#36E8CA] hover:opacity-80 transition whitespace-nowrap">
+            See all →
           </Link>
         </div>
-
-        <div className="flex flex-col gap-5">
-          {newsArticles.map((article, index) => (
-            <NewsArticle
-              key={index}
-              thumbnail={article.thumbnail}
-              headline={article.headline}
-              source={article.source}
-              timeAgo={article.timeAgo}
-              readTime={article.readTime}
-              companyTag={article.companyTag}
-            />
-          ))}
+        <div className="flex flex-col gap-3">
+          {latest.map(article => <NewsCard key={article.id} article={article} />)}
         </div>
       </div>
     </section>
