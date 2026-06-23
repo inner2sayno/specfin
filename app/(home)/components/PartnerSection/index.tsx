@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 const partners = [
   { src: "/home/partners/kpoproad-logo.png", alt: "Kpop Road" },
@@ -14,17 +13,16 @@ const partners = [
 
 export default function PartnerSection() {
   return (
-    <section className="relative w-full bg-[#060C3C] border-y border-[#36E8CA]/10 py-10 overflow-hidden">
+    <section className="w-full bg-[#F7F9FC] border-b border-[#E8EDF4] py-10">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-[11px] font-bold text-[#9FB6D0] tracking-[0.18em] uppercase mb-8">
-          Trusted Backers &amp; Partners
+        <p className="text-center text-[11px] font-bold text-[#4A5568] tracking-[0.18em] uppercase mb-8">
+          Trusted Backers & Partners
         </p>
         <div className="flex flex-wrap justify-center items-center gap-4">
           {partners.map((p) => (
-            <motion.div
+            <div
               key={p.alt}
-              whileHover={{ scale: 1.05 }}
-              className="relative h-12 w-36 rounded-lg bg-white/5 border border-[#36E8CA]/10 hover:border-[#36E8CA]/30 transition-colors overflow-hidden flex items-center justify-center px-4"
+              className="relative h-12 w-36 rounded-lg bg-white border border-[#E8EDF4] hover:border-[#0D3880]/20 hover:shadow-sm transition-all overflow-hidden flex items-center justify-center px-4"
             >
               <Image
                 src={p.src}
@@ -32,7 +30,7 @@ export default function PartnerSection() {
                 fill
                 className="object-contain p-2"
               />
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
