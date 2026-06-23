@@ -3,7 +3,8 @@ import { useParams } from "next/navigation";
 import { OPPORTUNITIES } from "@/lib/specfinData";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { InvestModal } from "@/components/InvestModal";
 
 function toM(n: number): string {
   if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
@@ -14,9 +15,21 @@ export default function OpportunityDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
   const opp = OPPORTUNITIES.find(o => o.slug === slug);
-  const [invested, setInvested] = useState(false);
-  const [amount, setAmount] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const pct = opp ? Math.min((opp.raised / opp.target) * 100, 100) : 0;
+
+  // Fetch live product data from API to get real productId
+  const [apiProduct, setApiProduct] = useState<{id:string;title:string;minInvestment:number;currency:string;acceptedPayments:string[];status:string}|null>(null);
+  useEffect(() => {
+    if (!slug) return;
+    fetch("/api/products")
+      .then(r => r.json())
+      .then(data => {
+        const found = (data.products || []).find((p: {slug:string}) => p.slug === slug);
+        if (found) setApiProduct(found);
+      })
+      .catch(() => {});
+  }, [slug]);
 
   if (!opp) return (
     <div className="min-h-screen bg-[#030812] flex items-center justify-center text-white">
@@ -44,8 +57,26 @@ export default function OpportunityDetailPage() {
     ...(opp.daysLeft ? [{ label: "Days left", value: opp.daysLeft + " days" }] : []),
   ];
 
+  // Build product object for InvestModal - prefer live API data, fallback to specfinData
+  const modalProduct = apiProduct ? {
+    id: apiProduct.id,
+    title: apiProduct.title,
+    minInvestment: apiProduct.minInvestment,
+    currency: apiProduct.currency,
+    acceptedPayments: apiProduct.acceptedPayments,
+  } : {
+    id: opp.slug,
+    title: opp.title,
+    minInvestment: typeof opp.minInvestment === "string" ? 5000 : Number(String(opp.minInvestment).replace(/[^0-9]/g, "")) || 5000,
+    currency: "USD",
+    acceptedPayments: ["stripe", "usdt", "eth"],
+  };
+
   return (
     <div className="min-h-screen bg-[#030812] text-white">
+      {showModal && (
+        <InvestModal product={modalProduct} onClose={() => setShowModal(false)} />
+      )}
       <div className="relative w-full h-52 overflow-hidden">
         <Image src={opp.banner} alt={opp.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#030812] via-[#030812]/50 to-transparent" />
@@ -57,7 +88,7 @@ export default function OpportunityDetailPage() {
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#36E8CA]/20 text-[#36E8CA] uppercase tracking-wide">{opp.stage}</span>
-              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded ${statusCls[opp.status]}`}>{opp.statusLabel}</span>
+              <span className={"text-[11px] font-semibold px-2 py-0.5 rounded " + statusCls[opp.status]}>{opp.statusLabel}</span>
             </div>
             <h1 className="text-[20px] font-bold text-white leading-tight">{opp.title}</h1>
             <p className="text-[12px] text-white/50 mt-0.5">{opp.sector}</p>
@@ -122,22 +153,25 @@ export default function OpportunityDetailPage() {
               </div>
             ))}
           </div>
-          {opp.status === "open" && !invested && (
+
+          {opp.status === "open" && (
             <div className="rounded-xl border border-[#36E8CA]/30 bg-[#081321] p-5">
-              <h3 className="text-[15px] font-bold text-white mb-1">Express interest</h3>
-              <p className="text-[11px] text-[#9fb6d0] mb-3">Complete KYC to access full investment documents.</p>
-              <input type="number" placeholder="Intended amount (USD)" value={amount} onChange={e => setAmount(e.target.value)} className="w-full bg-white/[0.06] border border-white/15 rounded-lg px-4 py-3 text-[14px] text-white placeholder-white/30 focus:outline-none focus:border-[#36E8CA]/50 mb-3" />
-              <button onClick={() => { if (amount) setInvested(true); }} className="w-full py-3 rounded-lg text-[14px] font-bold bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#030812] hover:opacity-90 transition">
-                {amount ? "Reserve " + amount + " USD" : "Enter amount above"}
+              <h3 className="text-[15px] font-bold text-white mb-1">Invest Now</h3>
+              <p className="text-[12px] text-[#9fb6d0] mb-4">Pay with credit card, USDT, ETH, or BNB. Accredited investors only.</p>
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {(apiProduct?.acceptedPayments || ["stripe","usdt","eth"]).map(m => (
+                  <span key={m} className="text-[11px] px-2 py-1 rounded border border-white/15 text-[#9fb6d0]">
+                    {m === "stripe" ? "💳 Card" : m === "usdt" ? "🟢 USDT" : m === "eth" ? "⬡ ETH" : "🟡 BNB"}
+                  </span>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowModal(true)}
+                className="w-full py-3 rounded-lg text-[14px] font-bold bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#030812] hover:opacity-90 transition"
+              >
+                Invest in this opportunity
               </button>
-              <p className="text-[11px] text-[#9fb6d0]/60 mt-3 text-center">Accredited investors only</p>
-            </div>
-          )}
-          {opp.status === "open" && invested && (
-            <div className="rounded-xl border border-[#059669]/30 bg-[#059669]/10 p-5 text-center">
-              <div className="text-3xl mb-2">+</div>
-              <h3 className="text-[15px] font-bold text-[#34d399] mb-1">Interest registered!</h3>
-              <p className="text-[12px] text-[#9fb6d0]">Our team will contact you within 1-2 business days with investment documents.</p>
+              <p className="text-[11px] text-[#9fb6d0]/60 mt-3 text-center">Minimum: {modalProduct.minInvestment.toLocaleString()} USD</p>
             </div>
           )}
           {opp.status === "coming-soon" && (
@@ -157,4 +191,4 @@ export default function OpportunityDetailPage() {
       </div>
     </div>
   );
-}
+              }
