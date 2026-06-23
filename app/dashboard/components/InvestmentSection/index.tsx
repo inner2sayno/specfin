@@ -33,7 +33,7 @@ function FundingBar({ raised, target }: { raised: number; target: number }) {
     </div>
   );
 }
-
+ 
 function StatusBadge({ status, label }: { status: string; label: string }) {
   const styles: Record<string, string> = {
     open: 'bg-[#059669]/15 text-[#34d399] border border-[#059669]/30',
