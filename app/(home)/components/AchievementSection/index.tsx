@@ -1,35 +1,54 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function AchievementSection() {
   return (
-    <section className="relative w-full overflow-hidden border-y border-[#36E8CA]/15">
-      <div className="absolute inset-0 z-0">
-        <Image src="/home/achievements/background.png" alt="" fill className="object-cover opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#00A896]/15 via-[#0A1550]/25 to-[#060C3C]" />
-      </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+    <section className="w-full bg-[#0D3880] border-b border-[#0D3880]">
+      <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <p className="text-[11px] font-bold text-[#36E8CA] tracking-[0.18em] uppercase mb-3">Now accepting applications</p>
-            <h2 className="text-[28px] lg:text-[34px] font-bold text-white mb-4 leading-tight">
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <p className="text-[11px] font-bold text-[#36E8CA] tracking-[0.18em] uppercase mb-3">
+              Now accepting applications
+            </p>
+            <h2 className="text-[28px] lg:text-[36px] font-bold text-white mb-4 leading-tight">
               Accepting investor applications for Phase 1
             </h2>
-            <p className="text-[16px] text-[#9FB6D0] max-w-lg leading-relaxed">
-              Specfin Technologies is currently onboarding accredited investors for our Hybrid Hedge Fund Platform. Join the waitlist to secure early access.
+            <p className="text-[16px] text-white/70 max-w-lg leading-relaxed">
+              Specfin Technologies is currently onboarding accredited investors for our Hybrid
+              Hedge Fund Platform. Join the waitlist to secure early access and reduced
+              performance fees as a founding investor.
             </p>
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex flex-col gap-4 lg:items-start">
-          <Link href="/connect-wallet" className="inline-flex items-center justify-center px-8 py-4 rounded-md text-[15px] font-bold bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#060C3C] hover:opacity-90 transition">
+        <motion.div
+          initial={{ opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col gap-4 lg:items-start"
+        >
+          <div className="flex flex-wrap gap-6 mb-2">
+            {[
+              { val: "Phase 1", lbl: "Now accepting" },
+              { val: "USDT / KRW", lbl: "Deposit methods" },
+              { val: "On-chain", lbl: "Transparency" },
+            ].map(({ val, lbl }) => (
+              <div key={lbl}>
+                <div className="text-[22px] font-bold text-white">{val}</div>
+                <div className="text-[12px] text-white/50">{lbl}</div>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/join"
+            className="inline-flex items-center justify-center px-8 py-4 rounded-md text-[15px] font-bold bg-white text-[#0D3880] hover:bg-white/90 transition shadow-sm"
+          >
             Apply for early access
           </Link>
-          <p className="text-[12px] text-[#9FB6D0]">Accredited investors only</p>
+          <p className="text-[12px] text-white/40">Accredited investors only</p>
         </motion.div>
       </div>
     </section>
   );
-                                                                    }
+}
