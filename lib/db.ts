@@ -4,7 +4,6 @@ import { randomBytes } from 'crypto';
 
 export function generateId() { return randomBytes(8).toString('hex'); }
 
-// ── Types ──────────────────────────────────────────────────────────
 export interface Product {
   id: string; slug: string; title: string; company: string;
   category: 'hedge-fund' | 'rwa' | 'token-sale' | 'private-equity';
@@ -31,27 +30,40 @@ export interface SiteConfig {
   featuredProductIds: string[]; maintenanceMode: boolean; updatedAt: string;
 }
 
-// ── Supabase helpers ───────────────────────────────────────────────
+// Supabase client
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createClient } = require('@supabase/supabase-js');
     return createClient(url, key);
   } catch { return null; }
 }
 
-function toProduct(r: Record<string, unknown>): Product {
+type AnyRecord = Record<string, unknown>;
+
+const PAYMENT_METHODS = ['stripe', 'usdt', 'eth', 'bnb'] as const;
+type PaymentMethod = typeof PAYMENT_METHODS[number];
+
+function toProduct(r: AnyRecord): Product {
+  const rawPayments = r.accepted_payments as string[] || ['stripe'];
+  const acceptedPayments = rawPayments.filter((p): p is PaymentMethod =>
+    PAYMENT_METHODS.includes(p as PaymentMethod)
+  );
   return {
     id: String(r.id), slug: String(r.slug), title: String(r.title),
-    company: String(r.company || ''), category: (r.category as Product['category']) || 'hedge-fund',
+    company: String(r.company || ''),
+    category: (r.category as Product['category']) || 'hedge-fund',
     stage: String(r.stage || ''), status: (r.status as Product['status']) || 'open',
     targetRaise: Number(r.target_raise || 0), raisedAmount: Number(r.raised_amount || 0),
-    minInvestment: Number(r.min_investment || 5000), currency: (r.currency as Product['currency']) || 'USD',
-    acceptedPayments: (r.accepted_payments as string[] || ['stripe']),
+    minInvestment: Number(r.min_investment || 5000),
+    currency: (r.currency as Product['currency']) || 'USD',
+    acceptedPayments: acceptedPayments.length > 0 ? acceptedPayments : ['stripe'],
     description: String(r.description || ''), longDescription: String(r.long_description || ''),
-    highlights: (r.highlights as string[] || []), riskLevel: (r.risk_level as Product['riskLevel']) || 'medium',
+    highlights: (r.highlights as string[] || []),
+    riskLevel: (r.risk_level as Product['riskLevel']) || 'medium',
     expectedReturn: String(r.expected_return || ''), investorCount: Number(r.investor_count || 0),
     deadline: String(r.deadline || ''), logoUrl: String(r.logo_url || ''),
     bannerUrl: String(r.banner_url || ''), featured: Boolean(r.featured),
@@ -60,7 +72,7 @@ function toProduct(r: Record<string, unknown>): Product {
   };
 }
 
-function toInvestment(r: Record<string, unknown>): Investment {
+function toInvestment(r: AnyRecord): Investment {
   return {
     id: String(r.id), productId: String(r.product_id || ''),
     userId: String(r.user_id || ''), userEmail: String(r.user_email || ''),
@@ -76,16 +88,15 @@ function toInvestment(r: Record<string, unknown>): Investment {
   };
 }
 
-// ── File-based fallback ────────────────────────────────────────────
+// File-based fallback
 const DB_PATH = join(process.cwd(), 'data', 'db.json');
-
 interface FileDB { products: Product[]; investments: Investment[]; siteConfig: SiteConfig; }
 
+const DEFAULT_CONFIG: SiteConfig = { heroTitle: 'The bridge between institutional capital and digital assets', heroSubtitle: '', heroCta: 'Apply for early access', announcementBanner: '', announcementEnabled: true, featuredProductIds: [], maintenanceMode: false, updatedAt: new Date().toISOString() };
+
 function readFile(): FileDB {
-  try {
-    if (existsSync(DB_PATH)) return JSON.parse(readFileSync(DB_PATH, 'utf-8')) as FileDB;
-  } catch {}
-  return { products: [], investments: [], siteConfig: { heroTitle: 'The bridge between institutional capital and digital assets', heroSubtitle: '', heroCta: 'Apply for early access', announcementBanner: '', announcementEnabled: true, featuredProductIds: [], maintenanceMode: false, updatedAt: new Date().toISOString() } };
+  try { if (existsSync(DB_PATH)) return JSON.parse(readFileSync(DB_PATH, 'utf-8')) as FileDB; } catch {}
+  return { products: [], investments: [], siteConfig: DEFAULT_CONFIG };
 }
 
 function writeFile(data: FileDB) {
@@ -96,13 +107,12 @@ function writeFile(data: FileDB) {
   } catch (e) { console.error('DB write error:', e); }
 }
 
-// ── Main db object ─────────────────────────────────────────────────
 export const db = {
   getProducts: async (): Promise<Product[]> => {
     const sb = getSupabase();
     if (sb) {
       const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
-      if (!error && data) return data.map(toProduct);
+      if (!error && data) return (data as AnyRecord[]).map(toProduct);
     }
     return readFile().products;
   },
@@ -111,7 +121,7 @@ export const db = {
     const sb = getSupabase();
     if (sb) {
       const { data } = await sb.from('products').select('*').or('id.eq.' + id + ',slug.eq.' + id).single();
-      if (data) return toProduct(data as Record<string, unknown>);
+      if (data) return toProduct(data as AnyRecord);
       return null;
     }
     return readFile().products.find(p => p.id === id || p.slug === id) || null;
@@ -124,7 +134,7 @@ export const db = {
     if (sb) {
       const row = { id: newId, slug: product.slug, title: product.title, company: product.company, category: product.category, stage: product.stage, status: product.status, target_raise: product.targetRaise, raised_amount: product.raisedAmount, min_investment: product.minInvestment, currency: product.currency, accepted_payments: product.acceptedPayments, description: product.description, long_description: product.longDescription, highlights: product.highlights, risk_level: product.riskLevel, expected_return: product.expectedReturn, investor_count: product.investorCount, deadline: product.deadline, logo_url: product.logoUrl, banner_url: product.bannerUrl, featured: product.featured, created_at: now, updated_at: now };
       const { data, error } = await sb.from('products').insert(row).select().single();
-      if (!error && data) return toProduct(data as Record<string, unknown>);
+      if (!error && data) return toProduct(data as AnyRecord);
     }
     const file = readFile();
     const p: Product = { ...product, id: newId, createdAt: now, updatedAt: now };
@@ -137,7 +147,7 @@ export const db = {
     const now = new Date().toISOString();
     const sb = getSupabase();
     if (sb) {
-      const row: Record<string, unknown> = { updated_at: now };
+      const row: AnyRecord = { updated_at: now };
       if (updates.title !== undefined) row.title = updates.title;
       if (updates.slug !== undefined) row.slug = updates.slug;
       if (updates.company !== undefined) row.company = updates.company;
@@ -160,7 +170,7 @@ export const db = {
       if (updates.bannerUrl !== undefined) row.banner_url = updates.bannerUrl;
       if (updates.featured !== undefined) row.featured = updates.featured;
       const { data, error } = await sb.from('products').update(row).eq('id', id).select().single();
-      if (!error && data) return toProduct(data as Record<string, unknown>);
+      if (!error && data) return toProduct(data as AnyRecord);
       return null;
     }
     const file = readFile();
@@ -188,7 +198,7 @@ export const db = {
     const sb = getSupabase();
     if (sb) {
       const { data, error } = await sb.from('investments').select('*').order('created_at', { ascending: false });
-      if (!error && data) return data.map(r => toInvestment(r as Record<string, unknown>));
+      if (!error && data) return (data as AnyRecord[]).map(toInvestment);
     }
     return readFile().investments;
   },
@@ -200,7 +210,7 @@ export const db = {
     if (sb) {
       const row = { id: newId, product_id: inv.productId, user_id: inv.userId, user_email: inv.userEmail, user_name: inv.userName, amount: inv.amount, currency: inv.currency, payment_method: inv.paymentMethod, payment_status: inv.paymentStatus, tx_hash: inv.txHash, wallet_address: inv.walletAddress, created_at: now, updated_at: now };
       const { data, error } = await sb.from('investments').insert(row).select().single();
-      if (!error && data) return toInvestment(data as Record<string, unknown>);
+      if (!error && data) return toInvestment(data as AnyRecord);
     }
     const file = readFile();
     const newInv: Investment = { ...inv, id: newId, createdAt: now, updatedAt: now };
@@ -213,12 +223,12 @@ export const db = {
     const now = new Date().toISOString();
     const sb = getSupabase();
     if (sb) {
-      const row: Record<string, unknown> = { updated_at: now };
+      const row: AnyRecord = { updated_at: now };
       if (updates.paymentStatus !== undefined) row.payment_status = updates.paymentStatus;
       if (updates.txHash !== undefined) row.tx_hash = updates.txHash;
       if (updates.stripePaymentId !== undefined) row.stripe_payment_id = updates.stripePaymentId;
       const { data, error } = await sb.from('investments').update(row).eq('id', id).select().single();
-      if (!error && data) return toInvestment(data as Record<string, unknown>);
+      if (!error && data) return toInvestment(data as AnyRecord);
       return null;
     }
     const file = readFile();
@@ -230,11 +240,12 @@ export const db = {
   },
 
   getSiteConfig: async (): Promise<SiteConfig> => {
+    const now = new Date().toISOString();
     const sb = getSupabase();
     if (sb) {
       const { data } = await sb.from('site_config').select('*').eq('id', 1).single();
       if (data) {
-        const r = data as Record<string, unknown>;
+        const r = data as AnyRecord;
         return { heroTitle: String(r.hero_title || ''), heroSubtitle: String(r.hero_subtitle || ''), heroCta: String(r.hero_cta || 'Apply for early access'), announcementBanner: String(r.announcement_banner || ''), announcementEnabled: Boolean(r.announcement_enabled), featuredProductIds: (r.featured_product_ids as string[] || []), maintenanceMode: Boolean(r.maintenance_mode), updatedAt: String(r.updated_at || now) };
       }
     }
@@ -245,7 +256,7 @@ export const db = {
     const now = new Date().toISOString();
     const sb = getSupabase();
     if (sb) {
-      const row: Record<string, unknown> = { updated_at: now };
+      const row: AnyRecord = { updated_at: now };
       if (updates.heroTitle !== undefined) row.hero_title = updates.heroTitle;
       if (updates.heroSubtitle !== undefined) row.hero_subtitle = updates.heroSubtitle;
       if (updates.heroCta !== undefined) row.hero_cta = updates.heroCta;
