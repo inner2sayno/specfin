@@ -33,7 +33,7 @@ export default function ContactPage() {
               <label className="block text-[12px] font-semibold text-[#9FB6D0] uppercase tracking-wider mb-2">Email</label>
               <input type="email" placeholder="your@email.com" className="w-full bg-white/[#0.05] border border-[#36E8CA]/15 rounded-lg px-4 py-3 text-[14px] text-white placeholder-white/30 focus:outline-none focus:border-[#36E8CA]/50" />
             </div>
-            <div>
+            <div> 
               <label className="block text-[12px] font-semibold text-[#9FB6D0] uppercase tracking-wider mb-2">Investor type</label>
               <select className="w-full bg-[#060C3C] border border-[#36E8CA]/15 rounded-lg px-4 py-3 text-[14px] text-white/70 focus:outline-none focus:border-[#36E8CA]/50">
                 <option value="">Select investor type</option>
