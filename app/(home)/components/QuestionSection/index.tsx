@@ -30,26 +30,33 @@ export default function QuestionSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="relative w-full bg-[#060C3C]/60 border-t border-[#36E8CA]/10 py-16">
+    <section className="w-full bg-white border-b border-[#E8EDF4] py-16">
       <div className="max-w-3xl mx-auto px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-[32px] lg:text-[38px] font-bold text-white text-center mb-12"
+          className="text-center mb-12"
         >
-          Frequently asked questions
-        </motion.h2>
+          <p className="text-[11px] font-bold text-[#00A896] tracking-[0.18em] uppercase mb-3">FAQ</p>
+          <h2 className="text-[30px] lg:text-[36px] font-bold text-[#0B1628]">
+            Frequently asked questions
+          </h2>
+        </motion.div>
 
         <div className="space-y-0">
           {FAQS.map((item, i) => (
-            <div key={i} className="border-b border-[#36E8CA]/10">
+            <div key={i} className="border-b border-[#E8EDF4]">
               <button
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex justify-between items-center py-5 text-left gap-4"
               >
-                <span className="text-[16px] font-semibold text-white">{item.q}</span>
-                <span className={`w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-full border text-[18px] transition-all duration-200 ${open === i ? "bg-[#36E8CA] border-[#36E8CA] text-[#060C3C] rotate-45" : "bg-[#36E8CA]/10 border-[#36E8CA]/30 text-[#36E8CA]"}`}>
+                <span className="text-[16px] font-semibold text-[#0B1628]">{item.q}</span>
+                <span className={`w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-full border text-[18px] transition-all duration-200 ${
+                  open === i
+                    ? "bg-[#0D3880] border-[#0D3880] text-white rotate-45"
+                    : "bg-[#F7F9FC] border-[#E8EDF4] text-[#0D3880]"
+                }`}>
                   +
                 </span>
               </button>
@@ -59,10 +66,10 @@ export default function QuestionSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.22 }}
                     className="overflow-hidden"
                   >
-                    <p className="text-[15px] text-[#9FB6D0] leading-[1.7] pb-5">{item.a}</p>
+                    <p className="text-[15px] text-[#4A5568] leading-[1.7] pb-5">{item.a}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
