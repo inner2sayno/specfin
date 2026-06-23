@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="16" fill="#FF3621"/>
+  <polygon points="40,14 62,26 62,50 40,62 18,50 18,26" fill="none" stroke="white" stroke-width="3"/>
+  <polygon points="40,22 54,30 54,46 40,54 26,46 26,30" fill="white" opacity="0.3"/>
+  <text x="50%" y="57%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="bold">DB</text>
+</svg>
