@@ -1,59 +1,21 @@
-'use client';
+import InvestmentSection from "../components/InvestmentSection";
+import type { Metadata } from "next";
 
-import { useState } from 'react';
-import FundingNowContent from './components/FundingNowContent';
-import VentureStartupsContent from './components/VentureStartupsContent';
-import VentureFundsContent from './components/VentureFundsContent';
-import AlternativeInvestmentContent from './components/AlternativeInvestmentContent';
-import AllPortfolioContent from './components/AllPortfolioContent';
-
-const tabs = [
-  'Funding Now',
-  'Venture Startups',
-  'Venture Funds',
-  'Alternative Investment',
-  'All Portfolio',
-];
+export const metadata: Metadata = { title: "Investment Opportunities" };
 
 export default function OpportunitiesPage() {
-  const [activeTab, setActiveTab] = useState(tabs[0]);
-
   return (
-    <div className="bg-[#1e1e1e] p-10">
-      <div className="mx-auto flex w-full flex-col gap-6 px-4">
-        <div className="flex flex-wrap items-center gap-6 border-b border-white/30 pb-4">
-          <div className="flex flex-1 flex-wrap items-center gap-8">
-            {tabs.map((tab) => {
-              const isActive = tab === activeTab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={`relative pb-2 text-base font-medium transition-colors ${
-                    isActive
-                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#60A5E0] to-[#36E8CA]'
-                      : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  {tab}
-                  {isActive && (
-                    <span className="absolute left-0 right-0 -bottom-[14px] h-[3px] rounded-full bg-gradient-to-r from-[#60A5E0] via-[#36E8CA] to-[#60A5E0]" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+    <div className="min-h-screen bg-[#030812] text-white">
+      <div className="px-4 lg:px-6 py-8 border-b border-white/5">
+        <div className="max-w-2xl">
+          <p className="text-[11px] font-bold text-[#36E8CA] tracking-[0.18em] uppercase mb-2">Verified & Audited</p>
+          <h1 className="text-[28px] font-bold text-white mb-2">Investment Opportunities</h1>
+          <p className="text-[14px] text-[#9fb6d0] leading-relaxed">
+            Browse all available hedge fund strategies, tokenized real-world assets, and pre-vetted token sales. Every listing independently audited. All performance records stored on-chain.
+          </p>
         </div>
-
-        {activeTab === 'Funding Now' && <FundingNowContent />}
-        {activeTab === 'Venture Startups' && <VentureStartupsContent />}
-        {activeTab === 'Venture Funds' && <VentureFundsContent />}
-        {activeTab === 'Alternative Investment' && (
-          <AlternativeInvestmentContent />
-        )}
-        {activeTab === 'All Portfolio' && <AllPortfolioContent />}
       </div>
+      <InvestmentSection variant="opportunities" />
     </div>
   );
 }
