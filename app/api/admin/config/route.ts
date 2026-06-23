@@ -9,14 +9,14 @@ function checkAdmin(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   if (!checkAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  return NextResponse.json({ config: db.getSiteConfig() });
+  return NextResponse.json({ config: await db.getSiteConfig() });
 }
 
 export async function PUT(req: NextRequest) {
   if (!checkAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const body = await req.json();
-    const config = db.updateSiteConfig(body);
+    const config = await db.updateSiteConfig(body);
     return NextResponse.json({ config });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
