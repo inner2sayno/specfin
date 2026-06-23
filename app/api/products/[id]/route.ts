@@ -5,7 +5,7 @@ const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'specfin-admin-2025';
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const product = db.getProduct(id);
+  const product = await db.getProduct(id);
   if (!product) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ product });
 }
@@ -17,7 +17,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const body = await req.json();
-    const product = db.updateProduct(id, body);
+    const product = await db.updateProduct(id, body);
     if (!product) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json({ product });
   } catch {
@@ -30,7 +30,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const { id } = await params;
-  const deleted = db.deleteProduct(id);
+  const deleted = await db.deleteProduct(id);
   if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ success: true });
 }
