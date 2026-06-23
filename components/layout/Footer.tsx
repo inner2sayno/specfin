@@ -32,9 +32,9 @@ const COLS = {
 
 export default function Footer() {
   return (
-    <footer style={{ background: "#020712", borderTop: "1px solid rgba(54,232,202,0.10)" }}>
+    <footer className="w-full bg-[#0B1628] border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-        {/* Brand column */}
+        {/* Brand */}
         <div className="lg:col-span-1">
           <Link href="/">
             <Image
@@ -42,29 +42,24 @@ export default function Footer() {
               alt="Specfin Technologies"
               width={110}
               height={32}
-              className="h-8 w-auto mb-4"
+              className="h-8 w-auto mb-5"
             />
           </Link>
           <p className="text-[13px] text-white/40 leading-relaxed mb-4 max-w-[220px]">
             Institutional hybrid investment platform. Traditional Finance meets Decentralized Finance.
           </p>
-          <p className="text-[11px] text-white/20 mb-2">Powered by Spectra Protocol</p>
+          <p className="text-[11px] text-white/20 mb-1">Powered by Spectra Protocol</p>
           <p className="text-[11px] text-white/20">Ark Global Co.</p>
         </div>
 
         {/* Link columns */}
         {Object.entries(COLS).map(([title, links]) => (
           <div key={title}>
-            <h4 className="text-[11px] font-bold text-white/60 tracking-[0.12em] uppercase mb-4">
-              {title}
-            </h4>
+            <h4 className="text-[11px] font-bold text-white/50 tracking-[0.12em] uppercase mb-4">{title}</h4>
             <ul className="space-y-2.5">
               {links.map((l) => (
                 <li key={l.label}>
-                  <Link
-                    href={l.href}
-                    className="text-[13px] text-white/40 hover:text-[#36E8CA] transition-colors"
-                  >
+                  <Link href={l.href} className="text-[13px] text-white/35 hover:text-[#36E8CA] transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -75,14 +70,11 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div
-        className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-      >
-        <p className="text-[12px] text-white/25 text-center sm:text-left">
+      <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 border-t border-white/5">
+        <p className="text-[12px] text-white/20 text-center sm:text-left">
           © 2026 Specfin Technologies · Ark Global Co. · All rights reserved.
         </p>
-        <p className="text-[12px] text-white/25 text-center">
+        <p className="text-[12px] text-white/20 text-center">
           Accredited investors only · Not financial advice · Past performance is not indicative of future results
         </p>
       </div>
