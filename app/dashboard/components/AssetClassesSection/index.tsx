@@ -1,85 +1,32 @@
 'use client';
-
 import Link from 'next/link';
-
-interface AssetClassCardProps {
-  title: string;
-  description: string;
-  href: string;
-}
-
-function AssetClassCard({ title, description, href }: AssetClassCardProps) {
-  return (
-    <div className="rounded-[12px] border border-white/20 bg-gradient-to-b from-[#2A2A2A] to-[#1E1E1E] p-6 transition-all duration-300 hover:border-white/40 hover:shadow-lg">
-      <h3 className="mb-4 text-xl font-semibold text-[#60A5E0]">{title}</h3>
-      <p className="mb-6 text-sm leading-relaxed text-white/80">
-        {description}
-      </p>
-      <Link
-        href={href}
-        className="inline-flex items-center text-sm font-medium text-white transition-colors duration-200 hover:text-[#60A5E0]"
-      >
-        Explore Opportunities
-        <svg
-          className="ml-2 h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </Link>
-    </div>
-  );
-}
+import { ASSET_CLASSES } from '@/lib/specfinData';
 
 export default function AssetClassesSection() {
-  const assetClasses = [
-    {
-      title: 'Big title in here',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s.',
-      href: '/asset-classes/1',
-    },
-    {
-      title: 'Big title in here',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s.',
-      href: '/asset-classes/2',
-    },
-    {
-      title: 'Big title in here',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s.',
-      href: '/asset-classes/3',
-    },
-  ];
-
   return (
-    <section className="w-full bg-[#05010F] py-8">
-      <div className="mx-auto flex w-full flex-col gap-8 px-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-bold text-[#60A5E0]">
-            OurCrowd&apos;s Asset Classes
-          </h2>
-          <p className="text-base text-white/80">
-            Explore diversified investments in unique asset classes
-          </p>
+    <section className="w-full bg-[#030812] border-t border-white/5 py-10">
+      <div className="mx-auto w-full flex flex-col gap-7 px-4 lg:px-6">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-[22px] font-bold text-white">Investment types</h2>
+          <p className="text-[13px] text-[#9fb6d0]">Diversified access to institutional-grade private market opportunities</p>
         </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {assetClasses.map((assetClass, index) => (
-            <AssetClassCard
-              key={index}
-              title={assetClass.title}
-              description={assetClass.description}
-              href={assetClass.href}
-            />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {ASSET_CLASSES.map((cls) => (
+            <div key={cls.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-6 flex flex-col gap-4 hover:border-white/20 hover:bg-white/[0.05] transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl" style={{ backgroundColor: cls.color + '20', border: '1px solid ' + cls.color + '40' }}>
+                  {cls.icon}
+                </div>
+                <h3 className="text-[16px] font-semibold text-white">{cls.title}</h3>
+              </div>
+              <p className="text-[13px] text-[#9fb6d0] leading-relaxed flex-1">{cls.description}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold px-2 py-1 rounded" style={{ color: cls.color, backgroundColor: cls.color + '15' }}>{cls.stats}</span>
+                <Link href={cls.href} className="text-[13px] font-semibold flex items-center gap-1 hover:opacity-80 transition" style={{ color: cls.color }}>
+                  Explore <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </Link>
+              </div>
+            </div>
           ))}
         </div>
       </div>
