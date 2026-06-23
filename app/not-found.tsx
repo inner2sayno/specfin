@@ -1,22 +1,30 @@
-"use client";
-
 import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black to-gray-900 text-white">
-      <div className="text-center">
-        <h1 className="text-8xl font-bold">404</h1>
-        <p className="mt-4 text-lg text-gray-400">
-          The website is under development.
+    <main className="w-full min-h-screen bg-white flex flex-col items-center justify-center px-6">
+      <div className="text-center max-w-md">
+        <div className="font-mono text-[80px] font-bold text-[#E8EDF4] leading-none mb-2">404</div>
+        <h1 className="text-[28px] font-bold text-[#0B1628] mb-3">Page not found</h1>
+        <p className="text-[15px] text-[#4A5568] leading-relaxed mb-8">
+          The page you are looking for does not exist or has been moved.
+          Specfin is under active development.
         </p>
-
-        <Link
-          href="/"
-          className="mt-8 inline-block rounded-xl bg-white px-6 py-3 text-black hover:bg-gray-200 transition">
-          Back to homepage
-        </Link>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link
+            href="/"
+            className="inline-flex items-center px-6 py-3 rounded-md text-[14px] font-bold bg-[#0D3880] text-white hover:bg-[#1a4fa0] transition"
+          >
+            Back to homepage
+          </Link>
+          <Link
+            href="/invest"
+            className="inline-flex items-center px-6 py-3 rounded-md text-[14px] font-semibold border border-[#E8EDF4] text-[#0B1628] hover:border-[#0D3880]/40 transition"
+          >
+            Browse opportunities
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
