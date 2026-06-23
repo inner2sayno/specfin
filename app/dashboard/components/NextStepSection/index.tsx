@@ -1,67 +1,30 @@
 'use client';
-
 import Link from 'next/link';
-import { FiTrendingUp, FiBell } from 'react-icons/fi';
 
-interface NextStepCardProps {
-  icon: React.ReactNode;
-  title: string;
-  time: string;
-  href: string;
-}
-
-function NextStepCard({ icon, title, time, href }: NextStepCardProps) {
-  return (
-    <Link
-      href={href}
-      className="group relative flex flex-col items-center rounded-[12px] border border-white/20 bg-gradient-to-b from-[#2A2A2A] to-[#1E1E1E] p-8 transition-all duration-300 hover:border-white/40 hover:shadow-lg"
-    >
-      <div className="absolute -top-6 z-10">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#60A5E0] to-[#36E8CA] shadow-lg">
-          <div className="text-white">{icon}</div>
-        </div>
-      </div>
-
-      <div className="mt-6 flex flex-col items-center text-center">
-        <h3 className="mb-2 text-lg font-medium text-white">{title}</h3>
-        <p className="text-sm text-white/70">{time}</p>
-      </div>
-    </Link>
-  );
-}
+const STEPS = [
+  { icon: "📊", title: "Browse strategies", desc: "5 min", href: "/dashboard/opportunities", color: "#36E8CA" },
+  { icon: "📰", title: "Read the news", desc: "3 min", href: "/dashboard/news", color: "#60A5E0" },
+  { icon: "🎟️", title: "Register for webinar", desc: "2 min", href: "/dashboard/events", color: "#EFC878" },
+  { icon: "🪙", title: "Check Spectra tiers", desc: "2 min", href: "/dashboard/token", color: "#9F84FF" },
+  { icon: "👤", title: "Complete your profile", desc: "5 min", href: "/dashboard/profile", color: "#00A896" },
+];
 
 export default function NextStepSection() {
-  const steps = [
-    {
-      icon: <FiTrendingUp className="h-6 w-6" />,
-      title: 'Browse Opportunities',
-      time: '5 min',
-      href: '/opportunities',
-    },
-    {
-      icon: <FiBell className="h-6 w-6" />,
-      title: 'Refer a friend',
-      time: '2 min',
-      href: '/refer',
-    },
-  ];
-
   return (
-    <section className="w-full bg-[#05010F] py-8">
-      <div className="mx-auto flex w-full flex-col gap-6 px-4">
-        <h2 className="text-2xl font-semibold text-[#60A5E0]">
-          Your Next Steps
-        </h2>
-
-        <div className="grid grid-cols-3 gap-6 md:grid-cols-5">
-          {steps.map((step, index) => (
-            <NextStepCard
-              key={index}
-              icon={step.icon}
-              title={step.title}
-              time={step.time}
-              href={step.href}
-            />
+    <section className="w-full bg-[#030812] border-t border-white/5 py-8">
+      <div className="mx-auto w-full flex flex-col gap-5 px-4 lg:px-6">
+        <h2 className="text-[18px] font-bold text-white">Your next steps</h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          {STEPS.map((step, i) => (
+            <Link key={i} href={step.href}
+              className="group relative flex flex-col items-center rounded-xl border border-white/10 bg-white/[0.03] p-5 transition-all hover:border-white/20 hover:bg-white/[0.06] text-center gap-2">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mb-1"
+                style={{ backgroundColor: step.color + "20", border: "1px solid " + step.color + "40" }}>
+                {step.icon}
+              </div>
+              <h3 className="text-[13px] font-semibold text-white leading-snug">{step.title}</h3>
+              <p className="text-[11px]" style={{ color: step.color }}>{step.desc}</p>
+            </Link>
           ))}
         </div>
       </div>
