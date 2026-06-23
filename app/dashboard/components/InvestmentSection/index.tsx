@@ -1,348 +1,98 @@
 'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import GradientButton from '@/components/ui/buttons/GradientButton';
+import { useState } from 'react';
+import { OPPORTUNITIES } from '@/lib/specfinData';
 
-interface ProjectCardProps {
-  slug: string;
-  banner: string;
-  logo: string;
-  title: string;
-  token: string;
-  status: 'allowlist' | 'closed';
-  description: string;
-  totalRaised: string;
-  targetRaised: string;
-  saleType: string;
+const FILTERS = ['All','Hedge Fund','RWA','Token Sale'];
+const TYPE_MAP: Record<string,string> = {'Hedge Fund':'hedge-fund','RWA':'rwa','Token Sale':'token-sale'};
+
+function FundingBar({raised,target}:{raised:number;target:number}) {
+  const pct = Math.min((raised/target)*100,100);
+  return (
+    <div className='mb-3'>
+      <div className='flex justify-between text-[11px] text-[#9fb6d0] mb-1'>
+        <span>Raised: ${'{'}(raised/1000000).toFixed(2){'}'}M</span>
+        <span>Target: ${'{'}(target/1000000).toFixed(1){'}'}M</span>
+      </div>
+      <div className='w-full bg-white/[0.08] rounded-full h-1.5 overflow-hidden'>
+        <div className='h-full rounded-full bg-gradient-to-r from-[#00A896] to-[#36E8CA]' style={{width:pct+'%'}} />
+      </div>
+    </div>
+  );
 }
 
-function ProjectCard({
-  slug,
-  banner,
-  logo,
-  title,
-  token,
-  status,
-  description,
-  totalRaised,
-  targetRaised,
-  saleType,
-}: ProjectCardProps) {
+function OpportunityCard({opp}:{opp:typeof OPPORTUNITIES[0]}) {
+  const statusCls: Record<string,string> = {
+    open:'bg-[#059669]/15 text-[#34d399] border border-[#059669]/30',
+    closed:'bg-white/5 text-white/40 border border-white/10',
+    'coming-soon':'bg-[#D97706]/15 text-[#fbbf24] border border-[#D97706]/30',
+  };
   return (
-    <div className="rounded-[12px] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-white/10 bg-gradient-to-b from-[#2A2A2A] to-[#1E1E1E]">
-      <div className="relative w-full h-48">
-        <Image
-          src={banner}
-          alt={title}
-          fill
-          className="object-cover"
-        />
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="relative w-16 h-16 rounded-full border-2 border-white shadow-lg overflow-hidden bg-gradient-to-b from-[#2A2A2A] to-[#1E1E1E]">
-            <Image
-              src={logo}
-              alt={`${title} logo`}
-              fill
-              className="p-2 object-contain"
-            />
+    <div className='flex flex-col rounded-xl overflow-hidden border border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200'>
+      <div className='relative w-full h-36 overflow-hidden'>
+        <Image src={opp.banner} alt={opp.title} fill className='object-cover' />
+        <div className='absolute inset-0 bg-gradient-to-t from-[#030812]/80 to-transparent' />
+        <div className='absolute bottom-3 left-4 right-4 flex items-end justify-between'>
+          <div className='w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 bg-[#030812]'>
+            <Image src={opp.logo} alt='' fill className='object-contain p-1' />
           </div>
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded ${statusCls[opp.status]||''}`}>{opp.statusLabel}</span>
         </div>
       </div>
-
-      <div className="p-6 pt-12 bg-gradient-to-b from-transparent to-[#1E1E1E]">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-white mb-1">{title}</h3>
-            <p className="text-sm text-gray-400">{token}</p>
-          </div>
-          <span
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
-              status === 'allowlist'
-                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                : 'bg-gray-700 text-gray-300'
-            }`}
-          >
-            {status === 'allowlist' ? (
-              <>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-                <span>Allowlist Open</span>
-              </>
-            ) : (
-              'Closed'
-            )}
-          </span>
+      <div className='p-4 flex flex-col gap-2 flex-1'>
+        <div>
+          <h3 className='text-[14px] font-semibold text-white leading-snug'>{opp.title}</h3>
+          <p className='text-[11px] text-[#9fb6d0] mt-0.5'>{opp.sector} · {opp.token}</p>
         </div>
-
-        <p className="text-sm text-[#D9D9D9] leading-relaxed mb-6">
-          {description}
-        </p>
-
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between text-sm text-white">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-5 h-5 text-white flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-              <span>Total raised:</span>
-            </div>
-            <strong className="font-semibold">{totalRaised}</strong>
+        <p className='text-[12px] text-[#9fb6d0] leading-relaxed line-clamp-2 flex-1'>{opp.description}</p>
+        {opp.raised > 0 && <FundingBar raised={opp.raised} target={opp.target} />}
+        <div className='grid grid-cols-2 gap-2 text-[11px]'>
+          <div className='bg-white/[0.04] rounded-lg p-2'>
+            <div className='text-[#9fb6d0] mb-0.5'>Min. invest</div>
+            <div className='font-semibold text-white'>{opp.minInvestment}</div>
           </div>
-          <div className="flex items-center justify-between text-sm text-white">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-5 h-5 text-white flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Total raised:</span>
-            </div>
-            <strong
-              className="font-semibold"
-              style={{
-                background: 'linear-gradient(90deg, #60A5E0 0%, #36E8CA 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              {targetRaised}
-            </strong>
-          </div>
-          <div className="flex items-center justify-between text-sm text-white">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-5 h-5 text-white flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                />
-              </svg>
-              <span>Sale Type:</span>
-            </div>
-            <strong className="font-semibold">{saleType}</strong>
+          <div className='bg-white/[0.04] rounded-lg p-2'>
+            <div className='text-[#9fb6d0] mb-0.5'>Target return</div>
+            <div className='font-semibold text-[#36E8CA]'>{opp.returnTarget}</div>
           </div>
         </div>
-
-        <Link href={`/investment/${slug}`} className="block">
-          <GradientButton
-            size="sm"
-            className="w-full rounded-[8px] border-2"
-            gradient="linear-gradient(90deg, #60A5E0 0%, #36E8CA 100%)"
-            style={{
-              borderColor: '#36E8CA',
-              boxShadow: '0 4px 4px 0 rgba(96, 165, 224, 0.50)',
-            }}
-          >
-            Token Sale
-          </GradientButton>
+        {opp.investors > 0 && (
+          <div className='flex items-center justify-between text-[11px] text-[#9fb6d0]'>
+            <span>{opp.investors} investors</span>
+            {opp.ytdReturn && <span className='text-[#34d399] font-semibold'>+{opp.ytdReturn}% YTD</span>}
+          </div>
+        )}
+        <Link href={`/dashboard/opportunity/${opp.slug}`}
+          className={`mt-1 w-full py-2.5 rounded-lg text-[13px] font-bold text-center transition ${opp.status==='open'?'bg-gradient-to-r from-[#00A896] to-[#36E8CA] text-[#030812] hover:opacity-90':'border border-white/15 text-white/60 hover:border-white/30'}`}>
+          {opp.status==='open'?'Invest now':opp.status==='coming-soon'?'Join waitlist':'View details'}
         </Link>
       </div>
     </div>
   );
 }
 
-interface SectionHeaderProps {
-  title: string;
-  subtitle?: string;
-  seeAllLink?: string;
-}
+export default function InvestmentSection({variant='dashboard'}:{variant?:'dashboard'|'opportunities'}={}) {
+  const [active,setActive] = useState('All');
+  const filtered = active==='All'?OPPORTUNITIES:OPPORTUNITIES.filter(o=>o.type===TYPE_MAP[active]);
+  const featured = OPPORTUNITIES.filter(o=>o.featured);
+  const closed = OPPORTUNITIES.filter(o=>o.status==='closed');
 
-function SectionHeader({ title, subtitle, seeAllLink }: SectionHeaderProps) {
-  return (
-    <div className="flex items-start justify-between mb-6">
-      <div>
-        <h2 
-          className="text-2xl font-bold mb-2"
-          style={{
-            background: 'linear-gradient(90deg, #60A5E0 0%, #36E8CA 100%)',
-            backgroundClip: 'text'
-          }}
-        >
-          {title}
-        </h2>
-        {subtitle && <p className="text-base text-white/80">{subtitle}</p>}
-      </div>
-      {seeAllLink && (
-        <Link
-          href={seeAllLink}
-          className="text-[#36E8CA] hover:text-[#60A5E0] font-medium text-sm transition-colors duration-200 whitespace-nowrap ml-4"
-        >
-          See all
-        </Link>
-      )}
-    </div>
-  );
-}
-
-interface InvestmentSectionProps {
-  variant?: 'dashboard' | 'opportunities';
-}
-
-export default function InvestmentSection({
-  variant = 'dashboard',
-}: InvestmentSectionProps = {}) {
-  const projects = [
-    {
-      slug: 'kpop-road',
-      banner: '/home/invest/kpoproad-banner.png',
-      logo: '/home/invest/kpoproad-logo.png',
-      title: 'Kpop Road',
-      token: '$KRST',
-      status: 'allowlist' as const,
-      description:
-        "KpopRoad's 300-NFT collection offers exclusive K-pop access, VIP rewards, and virtual events.",
-      totalRaised: '$200,000',
-      targetRaised: 'Finished!',
-      saleType: 'Vanguard',
-    },
-    {
-      slug: 'klove-pet',
-      banner: '/home/invest/klove-pet-banner.png',
-      logo: '/home/invest/klove-pet-logo.png',
-      title: 'K-Love Pet',
-      token: '$KPET',
-      status: 'closed' as const,
-      description:
-        "KpopRoad's 300-NFT collection offers exclusive K-pop access, VIP rewards, and virtual events.",
-      totalRaised: '$200,000',
-      targetRaised: 'Finished!',
-      saleType: 'Vanguard',
-    },
-    {
-      slug: 'royal-heritage',
-      banner: '/home/invest/royal-banner.png',
-      logo: '/home/invest/royal-logo.png',
-      title: 'Royal Heritage Card',
-      token: '$RHCrd',
-      status: 'allowlist' as const,
-      description:
-        "KpopRoad's 300-NFT collection offers exclusive K-pop access, VIP rewards, and virtual events.",
-      totalRaised: '$500,000',
-      targetRaised: 'Finished!',
-      saleType: 'Vanguard',
-    },
-  ];
-
-  if (variant === 'opportunities') {
+  if(variant==='opportunities') {
     return (
-      <div className="flex w-full flex-col gap-12 py-8">
-        <div>
-          <SectionHeader title="Trending Now" />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.slug}
-                slug={project.slug}
-                banner={project.banner}
-                logo={project.logo}
-                title={project.title}
-                token={project.token}
-                status={project.status}
-                description={project.description}
-                totalRaised={project.totalRaised}
-                targetRaised={project.targetRaised}
-                saleType={project.saleType}
-              />
-            ))}
-          </div>
+      <div className='flex w-full flex-col gap-10 py-6 px-4 lg:px-6'>
+        <div className='flex flex-wrap gap-2'>
+          {FILTERS.map(f=>(
+            <button key={f} onClick={()=>setActive(f)}
+              className={`text-[12px] font-semibold px-4 py-1.5 rounded-full border transition ${active===f?'bg-[#36E8CA] text-[#030812] border-[#36E8CA]':'border-white/15 text-[#9fb6d0] hover:border-white/30'}`}>
+              {f}
+            </button>
+          ))}
         </div>
-
         <div>
-          <SectionHeader title="New Opportunities" />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={`new-${project.slug}`}
-                slug={project.slug}
-                banner={project.banner}
-                logo={project.logo}
-                title={project.title}
-                token={project.token}
-                status={project.status}
-                description={project.description}
-                totalRaised={project.totalRaised}
-                targetRaised={project.targetRaised}
-                saleType={project.saleType}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <SectionHeader title="Investment in Funds" />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={`funds-${project.slug}`}
-                slug={project.slug}
-                banner={project.banner}
-                logo={project.logo}
-                title={project.title}
-                token={project.token}
-                status={project.status}
-                description={project.description}
-                totalRaised={project.totalRaised}
-                targetRaised={project.targetRaised}
-                saleType={project.saleType}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* All Opportunities Section */}
-        <div>
-          <SectionHeader title="All Opportunities" />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <ProjectCard
-              key="all-opportunities"
-              slug={projects[0].slug}
-              banner={projects[0].banner}
-              logo={projects[0].logo}
-              title={projects[0].title}
-              token={projects[0].token}
-              status={projects[0].status}
-              description={projects[0].description}
-              totalRaised={projects[0].totalRaised}
-              targetRaised={projects[0].targetRaised}
-              saleType={projects[0].saleType}
-            />
+          <h2 className='text-[18px] font-bold text-white mb-5'>All opportunities ({filtered.length})</h2>
+          <div className='grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3'>
+            {filtered.map(opp=><OpportunityCard key={opp.slug} opp={opp} />)}
           </div>
         </div>
       </div>
@@ -350,58 +100,29 @@ export default function InvestmentSection({
   }
 
   return (
-    <section className="w-full bg-[#05010F] py-8">
-      <div className="mx-auto flex w-full flex-col gap-12 px-4">
+    <section className='w-full bg-[#030812] border-t border-white/5 py-10'>
+      <div className='mx-auto w-full flex flex-col gap-8 px-4 lg:px-6'>
         <div>
-          <SectionHeader
-            title="Trending Opportunities"
-            subtitle="Invest in cutting-edge tech startups from around the world"
-            seeAllLink="/opportunities?filter=trending"
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.slug}
-                slug={project.slug}
-                banner={project.banner}
-                logo={project.logo}
-                title={project.title}
-                token={project.token}
-                status={project.status}
-                description={project.description}
-                totalRaised={project.totalRaised}
-                targetRaised={project.targetRaised}
-                saleType={project.saleType}
-              />
-            ))}
+          <div className='flex items-center justify-between mb-5'>
+            <div>
+              <h2 className='text-[22px] font-bold text-white'>Featured opportunities</h2>
+              <p className='text-[13px] text-[#9fb6d0] mt-0.5'>Accepting investors now — minimum investment from $500 USDT</p>
+            </div>
+            <Link href='/dashboard/opportunities' className='text-[13px] font-semibold text-[#36E8CA] hover:opacity-80 transition'>See all →</Link>
+          </div>
+          <div className='grid grid-cols-1 gap-5 md:grid-cols-2'>
+            {featured.map(opp=><OpportunityCard key={opp.slug} opp={opp} />)}
           </div>
         </div>
-
-        <div>
-          <SectionHeader
-            title="New Opportunities"
-            subtitle="Invest in OurCrowd's new investment opportunities"
-            seeAllLink="/opportunities?filter=new"
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <ProjectCard
-                key={`new-${project.slug}`}
-                slug={project.slug}
-                banner={project.banner}
-                logo={project.logo}
-                title={project.title}
-                token={project.token}
-                status={project.status}
-                description={project.description}
-                totalRaised={project.totalRaised}
-                targetRaised={project.targetRaised}
-                saleType={project.saleType}
-              />
-            ))}
+        {closed.length>0&&(
+          <div>
+            <h2 className='text-[18px] font-bold text-white mb-4'>Recent closes</h2>
+            <div className='grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3'>
+              {closed.map(opp=><OpportunityCard key={opp.slug} opp={opp} />)}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
-}
+      }
