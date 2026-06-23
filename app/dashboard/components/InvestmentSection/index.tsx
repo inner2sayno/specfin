@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { OPPORTUNITIES } from '@/lib/specfinData';
 
-const FILTERS = ['All', 'Hedge Fund', 'RWA', 'Token Sale'];
+const FILTERS = ['All', 'Growth Equity', 'Venture', 'Waitlist', 'Closed'];
 const TYPE_MAP: Record<string, string> = {
-  'Hedge Fund': 'hedge-fund',
-  'RWA': 'rwa',
-  'Token Sale': 'token-sale',
+  'Growth Equity': 'growth-equity',
+  'Venture': 'venture',
+  'Waitlist': 'coming-soon',
+  'Closed': 'closed',
 };
 
 function toM(n: number): string {
@@ -25,15 +26,12 @@ function FundingBar({ raised, target }: { raised: number; target: number }) {
         <span>Target: {toM(target)}</span>
       </div>
       <div className="w-full bg-white/[0.08] rounded-full h-1.5 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-[#00A896] to-[#36E8CA]"
-          style={{ width: pct + '%' }}
-        />
+        <div className="h-full rounded-full bg-gradient-to-r from-[#00A896] to-[#36E8CA]" style={{ width: pct + '%' }} />
       </div>
     </div>
   );
 }
- 
+
 function StatusBadge({ status, label }: { status: string; label: string }) {
   const styles: Record<string, string> = {
     open: 'bg-[#059669]/15 text-[#34d399] border border-[#059669]/30',
@@ -62,8 +60,9 @@ function OpportunityCard({ opp }: { opp: typeof OPPORTUNITIES[0] }) {
       </div>
       <div className="p-4 flex flex-col gap-2 flex-1">
         <div>
-          <h3 className="text-[14px] font-semibold text-white leading-snug">{opp.title}</h3>
-          <p className="text-[11px] text-[#9fb6d0] mt-0.5">{opp.sector} · {opp.token}</p>
+          <span className="text-[10px] font-bold text-[#36E8CA] uppercase tracking-wide">{opp.stage}</span>
+          <h3 className="text-[14px] font-semibold text-white leading-snug mt-0.5">{opp.title}</h3>
+          <p className="text-[11px] text-[#9fb6d0] mt-0.5">{opp.sector}</p>
         </div>
         <p className="text-[12px] text-[#9fb6d0] leading-relaxed line-clamp-2 flex-1">{opp.description}</p>
         {opp.raised > 0 && <FundingBar raised={opp.raised} target={opp.target} />}
@@ -73,16 +72,21 @@ function OpportunityCard({ opp }: { opp: typeof OPPORTUNITIES[0] }) {
             <div className="font-semibold text-white">{opp.minInvestment}</div>
           </div>
           <div className="bg-white/[0.04] rounded-lg p-2">
-            <div className="text-[#9fb6d0] mb-0.5">Target return</div>
-            <div className="font-semibold text-[#36E8CA]">{opp.returnTarget}</div>
+            <div className="text-[#9fb6d0] mb-0.5">Fee structure</div>
+            <div className="font-semibold text-[#36E8CA] text-[10px] leading-tight">{opp.fee}</div>
           </div>
         </div>
         {opp.investors > 0 && (
           <div className="flex items-center justify-between text-[11px] text-[#9fb6d0]">
             <span>{opp.investors} investors</span>
-            {opp.ytdReturn !== null && (
-              <span className="text-[#34d399] font-semibold">+{opp.ytdReturn}% YTD</span>
+            {opp.daysLeft !== null && opp.daysLeft > 0 && (
+              <span className="text-[#EFC878] font-semibold">{opp.daysLeft}d left</span>
             )}
+          </div>
+        )}
+        {opp.coInvestors && opp.coInvestors.length > 0 && (
+          <div className="text-[11px] text-[#9fb6d0]">
+            <span className="text-white/40">Co-investors: </span>{opp.coInvestors.slice(0, 2).join(', ')}
           </div>
         )}
         <Link
@@ -106,18 +110,26 @@ export default function InvestmentSection({
   variant?: 'dashboard' | 'opportunities';
 } = {}) {
   const [active, setActive] = useState('All');
+
   const filtered =
     active === 'All'
       ? OPPORTUNITIES
-      : OPPORTUNITIES.filter((o) => o.type === TYPE_MAP[active]);
-  const featured = OPPORTUNITIES.filter((o) => o.featured);
-  const closed = OPPORTUNITIES.filter((o) => o.status === 'closed');
+      : active === 'Waitlist'
+      ? OPPORTUNITIES.filter(o => o.status === 'coming-soon')
+      : active === 'Closed'
+      ? OPPORTUNITIES.filter(o => o.status === 'closed')
+      : OPPORTUNITIES.filter(o => o.type === TYPE_MAP[active]);
+
+  const featured = OPPORTUNITIES.filter(o => o.featured);
+  const open = OPPORTUNITIES.filter(o => o.status === 'open' && !o.featured);
+  const waitlist = OPPORTUNITIES.filter(o => o.status === 'coming-soon');
+  const closed = OPPORTUNITIES.filter(o => o.status === 'closed');
 
   if (variant === 'opportunities') {
     return (
       <div className="flex w-full flex-col gap-10 py-6 px-4 lg:px-6">
         <div className="flex flex-wrap gap-2">
-          {FILTERS.map((f) => (
+          {FILTERS.map(f => (
             <button
               key={f}
               onClick={() => setActive(f)}
@@ -132,11 +144,11 @@ export default function InvestmentSection({
           ))}
         </div>
         <div>
-          <h2 className="text-[18px] font-bold text-white mb-5">All opportunities ({filtered.length})</h2>
+          <h2 className="text-[18px] font-bold text-white mb-5">
+            {active === 'All' ? 'All opportunities' : active} ({filtered.length})
+          </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((opp) => (
-              <OpportunityCard key={opp.slug} opp={opp} />
-            ))}
+            {filtered.map(opp => <OpportunityCard key={opp.slug} opp={opp} />)}
           </div>
         </div>
       </div>
@@ -145,34 +157,52 @@ export default function InvestmentSection({
 
   return (
     <section className="w-full bg-[#030812] border-t border-white/5 py-10">
-      <div className="mx-auto w-full flex flex-col gap-8 px-4 lg:px-6">
+      <div className="mx-auto w-full flex flex-col gap-10 px-4 lg:px-6">
+        {/* Featured / Open */}
         <div>
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="text-[22px] font-bold text-white">Featured opportunities</h2>
-              <p className="text-[13px] text-[#9fb6d0] mt-0.5">Accepting investors now — minimum from $500 USDT</p>
+              <h2 className="text-[22px] font-bold text-white">Open opportunities</h2>
+              <p className="text-[13px] text-[#9fb6d0] mt-0.5">
+                Pre-vetted deals co-invested alongside top-tier VCs
+              </p>
             </div>
             <Link href="/dashboard/opportunities" className="text-[13px] font-semibold text-[#36E8CA] hover:opacity-80 transition">
               See all →
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            {featured.map((opp) => (
-              <OpportunityCard key={opp.slug} opp={opp} />
-            ))}
+            {featured.map(opp => <OpportunityCard key={opp.slug} opp={opp} />)}
           </div>
         </div>
+        {/* More open */}
+        {open.length > 0 && (
+          <div>
+            <h2 className="text-[18px] font-bold text-white mb-4">Also open</h2>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {open.map(opp => <OpportunityCard key={opp.slug} opp={opp} />)}
+            </div>
+          </div>
+        )}
+        {/* Waitlist */}
+        {waitlist.length > 0 && (
+          <div>
+            <h2 className="text-[18px] font-bold text-white mb-4">Coming soon — join waitlist</h2>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {waitlist.map(opp => <OpportunityCard key={opp.slug} opp={opp} />)}
+            </div>
+          </div>
+        )}
+        {/* Closed */}
         {closed.length > 0 && (
           <div>
             <h2 className="text-[18px] font-bold text-white mb-4">Recent closes</h2>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {closed.map((opp) => (
-                <OpportunityCard key={opp.slug} opp={opp} />
-              ))}
+              {closed.map(opp => <OpportunityCard key={opp.slug} opp={opp} />)}
             </div>
           </div>
         )}
       </div>
     </section>
   );
-          }
+}
