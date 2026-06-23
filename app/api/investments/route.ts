@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   if (req.headers.get('x-admin-key') !== ADMIN_KEY) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const investments = db.getInvestments();
+  const investments = await db.getInvestments();
   return NextResponse.json({ investments });
 }
 
@@ -18,22 +18,16 @@ export async function POST(req: NextRequest) {
     if (!productId || !userEmail || !amount || !paymentMethod) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    const product = db.getProduct(productId);
+    const product = await db.getProduct(productId);
     if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-    if (product.status !== 'open') return NextResponse.json({ error: 'Product is not open for investment' }, { status: 400 });
+    if (product.status !== 'open') return NextResponse.json({ error: 'Product is not open' }, { status: 400 });
     if (Number(amount) < product.minInvestment) {
       return NextResponse.json({ error: 'Amount below minimum: ' + product.minInvestment }, { status: 400 });
     }
-    const investment = db.createInvestment({
-      productId,
-      userId: userEmail,
-      userEmail,
-      userName: userName || userEmail,
-      amount: Number(amount),
-      currency: currency || 'USD',
-      paymentMethod,
-      paymentStatus: 'pending',
-      walletAddress,
+    const investment = await db.createInvestment({
+      productId, userId: userEmail, userEmail,
+      userName: userName || userEmail, amount: Number(amount),
+      currency: currency || 'USD', paymentMethod, paymentStatus: 'pending', walletAddress,
     });
     return NextResponse.json({ investment }, { status: 201 });
   } catch {
