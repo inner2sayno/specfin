@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'specfin-admin-2025';
 
 export async function GET() {
-  const products = db.getProducts();
+  const products = await db.getProducts();
   return NextResponse.json({ products });
 }
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     const body = await req.json();
-    const product = db.createProduct(body);
+    const product = await db.createProduct(body);
     return NextResponse.json({ product }, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
