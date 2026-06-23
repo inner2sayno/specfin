@@ -9,12 +9,12 @@ import WelcomeUserSection from "./components/WelcomeUser";
 
 export default function DashboardPage() {
   return (
-    <div className="bg-[#1e1e1e] text-white">
+    <div className="bg-[#030812] text-white">
       <WelcomeUserSection />
       <HeroSection />
       <InvestmentIntroSection />
-      <InvestmentSection />
       <NextStepSection />
+      <InvestmentSection />
       <AssetClassesSection />
       <PortfolioNewsSection />
       <GettingStartedSection />
