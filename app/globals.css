@@ -11,6 +11,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Sidebar — no scrollbar */
+aside {
+  scrollbar-width: none;
+}
+aside::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dashboard scroll areas (main content) */
 .dashboard-scroll {
   scrollbar-width: thin;
   scrollbar-color: #36E8CA rgba(255, 255, 255, 0.1);
