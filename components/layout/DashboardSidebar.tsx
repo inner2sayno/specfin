@@ -9,53 +9,60 @@ import {
   FiPieChart, FiClock, FiBarChart2, FiBriefcase, FiFileText, FiRefreshCw,
   FiMenu, FiUser, FiSmartphone, FiUsers, FiMessageCircle, FiExternalLink, FiDollarSign,
 } from "react-icons/fi";
+import { useLanguage, TKey } from "@/lib/i18n";
 
 interface NavItem {
-  label: string;
+  labelKey: TKey;
   icon: React.ReactNode;
   href: string;
   external?: boolean;
 }
 
-const sections: Array<{ title: string; icon: React.ReactNode; items: NavItem[] }> = [
+interface SectionDef {
+  titleKey: TKey;
+  icon: React.ReactNode;
+  items: NavItem[];
+}
+
+const SECTION_DEFS: SectionDef[] = [
   {
-    title: "Explore",
+    titleKey: "db_sec_explore",
     icon: <FiCompass className="h-5 w-5 text-white" />,
     items: [
-      { label: "Home", icon: <FiHome className="h-4 w-4" />, href: "/dashboard" },
-      { label: "Opportunities", icon: <FiTrendingUp className="h-4 w-4" />, href: "/dashboard/opportunities" },
-      { label: "News Feed", icon: <FiStar className="h-4 w-4" />, href: "/dashboard/news" },
-      { label: "How to Invest", icon: <FiBookOpen className="h-4 w-4" />, href: "/how-to-invest" },
-      { label: "Events & Webinars", icon: <FiCalendar className="h-4 w-4" />, href: "/dashboard/events" },
-      { label: "Spectra Token", icon: <FiDollarSign className="h-4 w-4" />, href: "/dashboard/token" },
+      { labelKey: "db_home", icon: <FiHome className="h-4 w-4" />, href: "/dashboard" },
+      { labelKey: "db_opportunities", icon: <FiTrendingUp className="h-4 w-4" />, href: "/dashboard/opportunities" },
+      { labelKey: "db_news", icon: <FiStar className="h-4 w-4" />, href: "/dashboard/news" },
+      { labelKey: "db_howtoinvest", icon: <FiBookOpen className="h-4 w-4" />, href: "/how-to-invest" },
+      { labelKey: "db_events", icon: <FiCalendar className="h-4 w-4" />, href: "/dashboard/events" },
+      { labelKey: "db_spectra", icon: <FiDollarSign className="h-4 w-4" />, href: "/dashboard/token" },
     ],
   },
   {
-    title: "My Investments",
+    titleKey: "db_sec_investments",
     icon: <FiPieChart className="h-5 w-5 text-white" />,
     items: [
-      { label: "Pending", icon: <FiClock className="h-4 w-4" />, href: "/dashboard/pending" },
-      { label: "Performance", icon: <FiBarChart2 className="h-4 w-4" />, href: "/dashboard/performance" },
-      { label: "Holdings", icon: <FiBriefcase className="h-4 w-4" />, href: "/dashboard/holdings" },
-      { label: "Reports & Tax Docs", icon: <FiFileText className="h-4 w-4" />, href: "/dashboard/reports" },
-      { label: "Activities", icon: <FiRefreshCw className="h-4 w-4" />, href: "/dashboard/activities" },
+      { labelKey: "db_pending", icon: <FiClock className="h-4 w-4" />, href: "/dashboard/pending" },
+      { labelKey: "db_performance", icon: <FiBarChart2 className="h-4 w-4" />, href: "/dashboard/performance" },
+      { labelKey: "db_holdings", icon: <FiBriefcase className="h-4 w-4" />, href: "/dashboard/holdings" },
+      { labelKey: "db_reports", icon: <FiFileText className="h-4 w-4" />, href: "/dashboard/reports" },
+      { labelKey: "db_activities", icon: <FiRefreshCw className="h-4 w-4" />, href: "/dashboard/activities" },
     ],
   },
   {
-    title: "General",
+    titleKey: "db_sec_general",
     icon: <FiMenu className="h-5 w-5 text-white" />,
     items: [
-      { label: "My Profile", icon: <FiUser className="h-4 w-4" />, href: "/dashboard/profile" },
-      { label: "Refer a Friend", icon: <FiUsers className="h-4 w-4" />, href: "/dashboard/refer" },
-      { label: "Contact Us", icon: <FiMessageCircle className="h-4 w-4" />, href: "/contact-us" },
-      { label: "Go to Specfin", icon: <FiExternalLink className="h-4 w-4" />, href: "/", external: true },
+      { labelKey: "db_profile", icon: <FiUser className="h-4 w-4" />, href: "/dashboard/profile" },
+      { labelKey: "db_refer", icon: <FiUsers className="h-4 w-4" />, href: "/dashboard/refer" },
+      { labelKey: "db_contact", icon: <FiMessageCircle className="h-4 w-4" />, href: "/contact-us" },
+      { labelKey: "db_go_site", icon: <FiExternalLink className="h-4 w-4" />, href: "/", external: true },
     ],
   },
 ];
 
 function NavItemComponent({
   label, icon, href, active, external, onItemClick,
-}: NavItem & { active: boolean; onItemClick?: () => void }) {
+}: { label: string; icon: React.ReactNode; href: string; active: boolean; external?: boolean; onItemClick?: () => void }) {
   const cls = `flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] transition ${
     active
       ? "bg-gradient-to-r from-[#00A896]/30 to-[#36E8CA]/20 text-[#36E8CA] font-semibold border border-[#36E8CA]/20"
@@ -78,79 +85,98 @@ function NavItemComponent({
 function NavSection({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 px-2">
         {icon}
-        <h3 className="text-[11px] font-bold text-white/50 tracking-[0.12em] uppercase">{title}</h3>
+        <span className="text-[11px] font-bold text-white/40 tracking-[0.14em] uppercase">{title}</span>
       </div>
       <div className="flex flex-col gap-0.5">{children}</div>
     </div>
   );
 }
 
-export default function DashboardSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+interface DashboardSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    if (isOpen && onClose) onClose();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
 
-  const handleClick = () => { if (onClose) onClose(); };
-
-  const sidebarContent = (
-    <aside className="fixed left-0 top-19 bottom-0 w-65 overflow-y-auto border-r border-white/5 bg-[#030812] lg:block dashboard-scroll">
-      <div className="flex h-full flex-col gap-6 px-4 py-6">
-        {sections.map((section) => (
-          <NavSection key={section.title} icon={section.icon} title={section.title}>
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-7">
+        {SECTION_DEFS.map((section) => (
+          <NavSection key={section.titleKey} icon={section.icon} title={t(section.titleKey)}>
             {section.items.map((item) => (
               <NavItemComponent
-                key={item.label}
-                {...item}
-                active={pathname === item.href || (!!item.href && pathname?.startsWith(item.href + "/") && item.href !== "/dashboard")}
-                onItemClick={handleClick}
+                key={item.href}
+                label={t(item.labelKey)}
+                icon={item.icon}
+                href={item.href}
+                active={pathname === item.href}
+                external={item.external}
+                onItemClick={onClose}
               />
             ))}
           </NavSection>
         ))}
+      </nav>
+
+      <div className="border-t border-white/[0.06] px-4 py-4">
+        <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0D3880] to-[#00A896] flex items-center justify-center text-white text-[13px] font-bold flex-shrink-0">
+            J
+          </div>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-white truncate">Investor</p>
+            <p className="text-[11px] text-[#9fb6d0] truncate">Accredited</p>
+          </div>
+        </div>
       </div>
-    </aside>
+    </div>
   );
 
   return (
     <>
-      <div className="hidden lg:block">{sidebarContent}</div>
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-[72px] bottom-0 w-65 bg-[#030812] border-r border-white/[0.06] z-30">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
               onClick={onClose}
             />
-            <motion.div
-              initial={{ x: -260 }} animate={{ x: 0 }} exit={{ x: -260 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="fixed left-0 top-19 bottom-0 w-65 overflow-y-auto border-r border-white/5 bg-[#030812] z-50 lg:hidden dashboard-scroll"
+            <motion.aside
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed left-0 top-0 bottom-0 w-72 bg-[#030812] border-r border-white/[0.06] z-50 lg:hidden"
             >
-              <div className="flex h-full flex-col gap-6 px-4 py-6">
-                {sections.map((section) => (
-                  <NavSection key={section.title} icon={section.icon} title={section.title}>
-                    {section.items.map((item) => (
-                      <NavItemComponent
-                        key={item.label}
-                        {...item}
-                        active={pathname === item.href || (!!item.href && pathname?.startsWith(item.href + "/") && item.href !== "/dashboard")}
-                        onItemClick={handleClick}
-                      />
-                    ))}
-                  </NavSection>
-                ))}
-              </div>
-            </motion.div>
+              <div className="h-[72px] border-b border-white/[0.06]" />
+              <SidebarContent />
+            </motion.aside>
           </>
         )}
       </AnimatePresence>
     </>
   );
-        }
+}
