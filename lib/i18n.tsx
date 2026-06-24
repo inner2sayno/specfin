@@ -5,6 +5,7 @@ export type Lang = "en" | "ko";
 
 const T = {
   en: {
+    // Header / Nav (public)
     nav_invest: "Invest",
     nav_rwa: "RWA Assets",
     nav_spectra: "Spectra Token",
@@ -16,6 +17,7 @@ const T = {
     subnav_token: "Token Sales",
     subnav_rwa: "Real World Assets",
     subnav_spectra: "Spectra Token",
+    // Hero
     hero_badge: "Institutional Hybrid Investment Platform",
     hero_h1a: "The bridge between",
     hero_h1b: "institutional capital",
@@ -31,6 +33,7 @@ const T = {
     hero_investors: "Investors",
     hero_tier: "Your tier",
     hero_phase: "Phase 1 · Accepting accredited investors",
+    // Achievement
     achieve_badge: "Now accepting applications",
     achieve_h2: "Accepting investor applications for Phase 1",
     achieve_p: "Specfin Technologies is currently onboarding accredited investors for our Hybrid Hedge Fund Platform. Join the waitlist to secure early access and reduced performance fees as a founding investor.",
@@ -39,6 +42,7 @@ const T = {
     achieve_stat3: "Transparency",
     achieve_cta: "Apply for early access",
     achieve_note: "Accredited investors only",
+    // Footer
     footer_tagline: "Institutional hybrid investment platform. Traditional Finance meets Decentralized Finance.",
     footer_copy: "© 2026 Specfin Technologies · Ark Global Co. · All rights reserved.",
     footer_legal: "Accredited investors only · Not financial advice · Past performance is not indicative of future results",
@@ -64,8 +68,32 @@ const T = {
     footer_link_terms: "Terms of Service",
     footer_link_disclaimer: "General Disclaimer",
     footer_link_accredited: "Accredited Investor Notice",
+    // Dashboard header
+    db_search_placeholder: "Search investments, strategies...",
+    db_my_portfolio: "My Portfolio",
+    // Dashboard sidebar sections
+    db_sec_explore: "Explore",
+    db_sec_investments: "My Investments",
+    db_sec_general: "General",
+    // Dashboard sidebar items
+    db_home: "Home",
+    db_opportunities: "Opportunities",
+    db_news: "News Feed",
+    db_howtoinvest: "How to Invest",
+    db_events: "Events & Webinars",
+    db_spectra: "Spectra Token",
+    db_pending: "Pending",
+    db_performance: "Performance",
+    db_holdings: "Holdings",
+    db_reports: "Reports & Tax Docs",
+    db_activities: "Activities",
+    db_profile: "My Profile",
+    db_refer: "Refer a Friend",
+    db_contact: "Contact Us",
+    db_go_site: "Go to Specfin",
   },
   ko: {
+    // Header / Nav (public)
     nav_invest: "투자하기",
     nav_rwa: "실물자산(RWA)",
     nav_spectra: "스펙트라 토큰",
@@ -77,6 +105,7 @@ const T = {
     subnav_token: "토큰 세일",
     subnav_rwa: "실물자산",
     subnav_spectra: "스펙트라 토큰",
+    // Hero
     hero_badge: "기관급 하이브리드 투자 플랫폼",
     hero_h1a: "기관 자본과",
     hero_h1b: "디지털 자산을",
@@ -92,6 +121,7 @@ const T = {
     hero_investors: "투자자 수",
     hero_tier: "내 등급",
     hero_phase: "Phase 1 · 적격 투자자 모집 중",
+    // Achievement
     achieve_badge: "지금 신청 받는 중",
     achieve_h2: "Phase 1 투자자 신청 접수 중",
     achieve_p: "Specfin Technologies는 현재 하이브리드 헤지펀드 플랫폼 Phase 1 적격 투자자를 모집하고 있습니다. 초기 투자자로 대기자 명단에 등록하시면 우선 접근권과 성과 보수 할인 혜택을 받으실 수 있습니다.",
@@ -100,6 +130,7 @@ const T = {
     achieve_stat3: "투명성",
     achieve_cta: "조기 접근 신청하기",
     achieve_note: "적격 투자자 전용",
+    // Footer
     footer_tagline: "기관급 하이브리드 투자 플랫폼. 전통 금융과 탈중앙화 금융의 만남.",
     footer_copy: "© 2026 Specfin Technologies · Ark Global Co. · 모든 권리 보유.",
     footer_legal: "적격 투자자 전용 · 투자 조언이 아닙니다 · 과거 성과는 미래 결과를 보장하지 않습니다",
@@ -125,6 +156,29 @@ const T = {
     footer_link_terms: "이용약관",
     footer_link_disclaimer: "일반 면책 조항",
     footer_link_accredited: "적격 투자자 공지",
+    // Dashboard header
+    db_search_placeholder: "투자 상품, 전략 검색...",
+    db_my_portfolio: "내 포트폴리오",
+    // Dashboard sidebar sections
+    db_sec_explore: "탐색",
+    db_sec_investments: "내 투자",
+    db_sec_general: "일반",
+    // Dashboard sidebar items
+    db_home: "홈",
+    db_opportunities: "투자 기회",
+    db_news: "뉴스 피드",
+    db_howtoinvest: "투자 방법",
+    db_events: "이벤트 & 웨비나",
+    db_spectra: "스펙트라 토큰",
+    db_pending: "대기 중",
+    db_performance: "수익률",
+    db_holdings: "보유 자산",
+    db_reports: "리포트 & 세금 서류",
+    db_activities: "활동 내역",
+    db_profile: "내 프로필",
+    db_refer: "친구 초대",
+    db_contact: "문의하기",
+    db_go_site: "Specfin 사이트로",
   },
 } as const;
 
