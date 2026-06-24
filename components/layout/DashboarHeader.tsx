@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiSearch, FiBell, FiUser, FiMenu, FiX } from 'react-icons/fi';
+import { useLanguage } from '@/lib/i18n';
 
 interface DashboardHeaderProps {
   onMenuToggle?: () => void;
@@ -10,6 +11,8 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ onMenuToggle, isSidebarOpen = false }: DashboardHeaderProps) {
+  const { lang, setLang, t } = useLanguage();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-[#1a2a3a] bg-[#030812]">
       <div className="mx-auto flex w-full items-center justify-between gap-6 px-4 sm:px-8 py-4">
@@ -18,7 +21,7 @@ export default function DashboardHeader({ onMenuToggle, isSidebarOpen = false }:
           <button
             onClick={onMenuToggle}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:border-white/30 lg:hidden"
-            aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
+            aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
           >
             {isSidebarOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
           </button>
@@ -45,7 +48,7 @@ export default function DashboardHeader({ onMenuToggle, isSidebarOpen = false }:
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                My Portfolio
+                {t('db_my_portfolio')}
               </Link>
             </nav>
           </div>
@@ -53,7 +56,7 @@ export default function DashboardHeader({ onMenuToggle, isSidebarOpen = false }:
           <div className="hidden lg:flex w-[360px] max-w-[420px] items-center rounded-lg bg-white/[0.05] border border-white/10 px-5 py-2 text-sm text-white/70">
             <input
               type="text"
-              placeholder="Search investments, strategies..."
+              placeholder={t('db_search_placeholder')}
               className="flex-1 bg-transparent text-white placeholder:text-white/30 focus:outline-none text-[13px]"
               aria-label="Search"
             />
@@ -64,6 +67,30 @@ export default function DashboardHeader({ onMenuToggle, isSidebarOpen = false }:
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4">
+          {/* Language Toggle */}
+          <div className="flex items-center rounded-md border border-white/15 overflow-hidden">
+            <button
+              onClick={() => setLang('en')}
+              className={`px-2.5 py-1.5 text-[11px] font-bold transition-colors ${
+                lang === 'en'
+                  ? 'bg-[#00A896] text-white'
+                  : 'text-white/50 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang('ko')}
+              className={`px-2.5 py-1.5 text-[11px] font-bold transition-colors ${
+                lang === 'ko'
+                  ? 'bg-[#00A896] text-white'
+                  : 'text-white/50 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              KO
+            </button>
+          </div>
+
           <button
             type="button"
             className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white hover:border-white/30 transition"
