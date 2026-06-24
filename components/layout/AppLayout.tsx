@@ -12,12 +12,12 @@ import DashboardHeader from "./DashboarHeader";
 import DashboardSidebar from "./DashboardSidebar";
 import DashboardFooter from "./DashboardFooter";
 import { AuthSyncProvider } from "./AuthSyncProvider";
+import { LanguageProvider } from "@/lib/i18n";
 
-// Tạo QueryClient một lần
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+      gcTime: 1000 * 60 * 60 * 24,
     },
   },
 });
@@ -35,13 +35,8 @@ export default function ClientLayout({
   const isDashboardRoute = pathname?.startsWith("/dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   if (isDashboardRoute) {
     return (
@@ -49,20 +44,19 @@ export default function ClientLayout({
         <WagmiProvider cookies={cookies}>
           <QueryClientProvider client={queryClient}>
             <AuthSyncProvider>
-              <div className="min-h-screen bg-[#1E1E1E]">
-                <DashboardHeader
-                  onMenuToggle={toggleSidebar}
-                  isSidebarOpen={isSidebarOpen}
-                />
-                <DashboardSidebar
-                  isOpen={isSidebarOpen}
-                  onClose={closeSidebar}
-                />
-                <main className="lg:ml-65 mt-19 mb-11.5 min-h-[calc(100vh-122px)]">
-                  {children}
-                </main>
-                <DashboardFooter />
-              </div>
+              <LanguageProvider>
+                <div className="min-h-screen bg-[#1E1E1E]">
+                  <DashboardHeader
+                    onMenuToggle={toggleSidebar}
+                    isSidebarOpen={isSidebarOpen}
+                  />
+                  <DashboardSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+                  <main className="lg:ml-65 mt-19 mb-11.5 min-h-[calc(100vh-122px)]">
+                    {children}
+                  </main>
+                  <DashboardFooter />
+                </div>
+              </LanguageProvider>
             </AuthSyncProvider>
           </QueryClientProvider>
         </WagmiProvider>
@@ -75,11 +69,13 @@ export default function ClientLayout({
       <WagmiProvider cookies={cookies}>
         <QueryClientProvider client={queryClient}>
           <AuthSyncProvider>
-            <div className="flex flex-col min-h-screen">
-              {isInvestmentRoute ? <InvestmentHeader /> : <Header />}
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <LanguageProvider>
+              <div className="flex flex-col min-h-screen">
+                {isInvestmentRoute ? <InvestmentHeader /> : <Header />}
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </LanguageProvider>
           </AuthSyncProvider>
         </QueryClientProvider>
       </WagmiProvider>
