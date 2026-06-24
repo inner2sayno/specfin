@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FiCompass, FiHome, FiTrendingUp, FiStar, FiBookOpen, FiCalendar,
   FiPieChart, FiClock, FiBarChart2, FiBriefcase, FiFileText, FiRefreshCw,
-  FiMenu, FiUser, FiSmartphone, FiUsers, FiMessageCircle, FiExternalLink, FiDollarSign,
+  FiMenu, FiUser, FiUsers, FiMessageCircle, FiExternalLink, FiDollarSign,
 } from "react-icons/fi";
 import { useLanguage, TKey } from "@/lib/i18n";
 
@@ -27,7 +27,7 @@ interface SectionDef {
 const SECTION_DEFS: SectionDef[] = [
   {
     titleKey: "db_sec_explore",
-    icon: <FiCompass className="h-5 w-5 text-white" />,
+    icon: <FiCompass className="h-4 w-4 text-white/40" />,
     items: [
       { labelKey: "db_home", icon: <FiHome className="h-4 w-4" />, href: "/dashboard" },
       { labelKey: "db_opportunities", icon: <FiTrendingUp className="h-4 w-4" />, href: "/dashboard/opportunities" },
@@ -39,7 +39,7 @@ const SECTION_DEFS: SectionDef[] = [
   },
   {
     titleKey: "db_sec_investments",
-    icon: <FiPieChart className="h-5 w-5 text-white" />,
+    icon: <FiPieChart className="h-4 w-4 text-white/40" />,
     items: [
       { labelKey: "db_pending", icon: <FiClock className="h-4 w-4" />, href: "/dashboard/pending" },
       { labelKey: "db_performance", icon: <FiBarChart2 className="h-4 w-4" />, href: "/dashboard/performance" },
@@ -50,7 +50,7 @@ const SECTION_DEFS: SectionDef[] = [
   },
   {
     titleKey: "db_sec_general",
-    icon: <FiMenu className="h-5 w-5 text-white" />,
+    icon: <FiMenu className="h-4 w-4 text-white/40" />,
     items: [
       { labelKey: "db_profile", icon: <FiUser className="h-4 w-4" />, href: "/dashboard/profile" },
       { labelKey: "db_refer", icon: <FiUsers className="h-4 w-4" />, href: "/dashboard/refer" },
@@ -84,10 +84,10 @@ function NavItemComponent({
 
 function NavSection({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 px-2">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-2 px-2 mb-1">
         {icon}
-        <span className="text-[11px] font-bold text-white/40 tracking-[0.14em] uppercase">{title}</span>
+        <span className="text-[10px] font-bold text-white/35 tracking-[0.14em] uppercase">{title}</span>
       </div>
       <div className="flex flex-col gap-0.5">{children}</div>
     </div>
@@ -113,8 +113,9 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
   }, [isOpen]);
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-7">
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Nav — no scrollbar, compact spacing */}
+      <nav className="flex-1 py-4 px-3 flex flex-col gap-4 overflow-hidden">
         {SECTION_DEFS.map((section) => (
           <NavSection key={section.titleKey} icon={section.icon} title={t(section.titleKey)}>
             {section.items.map((item) => (
@@ -125,21 +126,22 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
                 href={item.href}
                 active={pathname === item.href}
                 external={item.external}
-                onItemClick={onClose}
+                onItemClick={onItemClick => onClose()}
               />
             ))}
           </NavSection>
         ))}
       </nav>
 
-      <div className="border-t border-white/[0.06] px-4 py-4">
+      {/* User footer */}
+      <div className="border-t border-white/[0.06] px-3 py-3 flex-shrink-0">
         <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.06] px-3 py-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0D3880] to-[#00A896] flex items-center justify-center text-white text-[13px] font-bold flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0D3880] to-[#00A896] flex items-center justify-center text-white text-[12px] font-bold flex-shrink-0">
             J
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-white truncate">Investor</p>
-            <p className="text-[11px] text-[#9fb6d0] truncate">Accredited</p>
+            <p className="text-[12px] font-semibold text-white truncate">Investor</p>
+            <p className="text-[10px] text-[#9fb6d0] truncate">Accredited</p>
           </div>
         </div>
       </div>
@@ -148,8 +150,8 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-[72px] bottom-0 w-65 bg-[#030812] border-r border-white/[0.06] z-30">
+      {/* Desktop sidebar — no scrollbar */}
+      <aside className="hidden lg:flex flex-col fixed left-0 top-[72px] bottom-0 w-65 bg-[#030812] border-r border-white/[0.06] z-30 overflow-hidden">
         <SidebarContent />
       </aside>
 
@@ -169,9 +171,9 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-72 bg-[#030812] border-r border-white/[0.06] z-50 lg:hidden"
+              className="fixed left-0 top-0 bottom-0 w-72 bg-[#030812] border-r border-white/[0.06] z-50 lg:hidden overflow-hidden"
             >
-              <div className="h-[72px] border-b border-white/[0.06]" />
+              <div className="h-[72px] border-b border-white/[0.06] flex-shrink-0" />
               <SidebarContent />
             </motion.aside>
           </>
@@ -179,4 +181,4 @@ export default function DashboardSidebar({ isOpen, onClose }: DashboardSidebarPr
       </AnimatePresence>
     </>
   );
-}
+      }
