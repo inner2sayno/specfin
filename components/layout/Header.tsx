@@ -4,22 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useConnection } from "wagmi";
-
-const NAV_ITEMS = [
-  { label: "Invest", href: "/invest" },
-  { label: "RWA Assets", href: "/rwa-assets" },
-  { label: "Spectra Token", href: "/spectra-token" },
-  { label: "About", href: "/about" },
-];
-
-const SUBNAV_ITEMS = [
-  { label: "Hedge Fund Strategies", href: "/invest?filter=hedge-fund" },
-  { label: "Token Sales", href: "/invest?filter=token-sale" },
-  { label: "Real World Assets", href: "/invest?filter=rwa" },
-  { label: "Spectra Token", href: "/spectra-token" },
-];
+import { useLanguage } from "@/lib/i18n";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,6 +14,7 @@ export default function Header() {
   const [showSubnav, setShowSubnav] = useState(false);
   const pathname = usePathname();
   const { isConnected } = useConnection();
+  const { lang, setLang, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -41,9 +29,22 @@ export default function Header() {
 
   const closeMobile = () => setIsMobileMenuOpen(false);
 
+  const NAV_ITEMS = [
+    { label: t("nav_invest"), href: "/invest" },
+    { label: t("nav_rwa"), href: "/rwa-assets" },
+    { label: t("nav_spectra"), href: "/spectra-token" },
+    { label: t("nav_about"), href: "/about" },
+  ];
+
+  const SUBNAV_ITEMS = [
+    { label: t("subnav_hedge"), href: "/invest?filter=hedge-fund" },
+    { label: t("subnav_token"), href: "/invest?filter=token-sale" },
+    { label: t("subnav_rwa"), href: "/invest?filter=rwa" },
+    { label: t("subnav_spectra"), href: "/spectra-token" },
+  ];
+
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* ── Primary nav — light theme ── */}
       <div
         className={`w-full transition-all duration-300 border-b ${
           isScrolled
@@ -88,14 +89,38 @@ export default function Header() {
               })}
             </nav>
 
-            {/* Desktop CTAs */}
+            {/* Desktop CTAs + Language Toggle */}
             <div className="hidden lg:flex items-center gap-2">
+              {/* Language Toggle */}
+              <div className="flex items-center rounded-md border border-[#E8EDF4] overflow-hidden mr-1">
+                <button
+                  onClick={() => setLang("en")}
+                  className={`px-2.5 py-1.5 text-[12px] font-bold transition-colors ${
+                    lang === "en"
+                      ? "bg-[#0D3880] text-white"
+                      : "text-[#4A5568] hover:bg-[#F7F9FC]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLang("ko")}
+                  className={`px-2.5 py-1.5 text-[12px] font-bold transition-colors ${
+                    lang === "ko"
+                      ? "bg-[#0D3880] text-white"
+                      : "text-[#4A5568] hover:bg-[#F7F9FC]"
+                  }`}
+                >
+                  한국어
+                </button>
+              </div>
+
               {isConnected ? (
                 <Link
                   href="/dashboard"
                   className="px-5 py-2.5 rounded-md text-[14px] font-bold bg-[#0D3880] text-white hover:bg-[#1a4fa0] transition"
                 >
-                  Dashboard
+                  {t("nav_dashboard")}
                 </Link>
               ) : (
                 <>
@@ -103,35 +128,55 @@ export default function Header() {
                     href="/join?mode=signin"
                     className="px-5 py-2.5 rounded-md text-[14px] font-semibold border border-[#E8EDF4] text-[#0B1628] hover:border-[#0D3880]/40 hover:text-[#0D3880] transition"
                   >
-                    Sign in
+                    {t("nav_signin")}
                   </Link>
                   <Link
                     href="/join"
                     className="px-5 py-2.5 rounded-md text-[14px] font-bold bg-[#0D3880] text-white hover:bg-[#1a4fa0] transition shadow-sm"
                   >
-                    Join now
+                    {t("nav_join")}
                   </Link>
                 </>
               )}
             </div>
 
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden text-[#0B1628] p-2"
-              aria-label="Toggle menu"
-            >
-              <div className="w-5 flex flex-col gap-1.5">
-                <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
-                <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "opacity-0" : ""}`} />
-                <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            {/* Mobile: lang toggle + hamburger */}
+            <div className="lg:hidden flex items-center gap-2">
+              <div className="flex items-center rounded-md border border-[#E8EDF4] overflow-hidden">
+                <button
+                  onClick={() => setLang("en")}
+                  className={`px-2 py-1 text-[11px] font-bold transition-colors ${
+                    lang === "en" ? "bg-[#0D3880] text-white" : "text-[#4A5568]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLang("ko")}
+                  className={`px-2 py-1 text-[11px] font-bold transition-colors ${
+                    lang === "ko" ? "bg-[#0D3880] text-white" : "text-[#4A5568]"
+                  }`}
+                >
+                  KO
+                </button>
               </div>
-            </button>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-[#0B1628] p-2"
+                aria-label="Toggle menu"
+              >
+                <div className="w-5 flex flex-col gap-1.5">
+                  <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
+                  <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "opacity-0" : ""}`} />
+                  <span className={`block h-0.5 bg-[#0B1628] transition-all ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── Secondary subnav ── */}
+      {/* Subnav */}
       <AnimatePresence>
         {showSubnav && (
           <motion.div
@@ -156,7 +201,7 @@ export default function Header() {
         )}
       </AnimatePresence>
 
-      {/* ── Mobile menu ── */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -198,28 +243,16 @@ export default function Header() {
                   className="pt-4 flex flex-col gap-2"
                 >
                   {isConnected ? (
-                    <Link
-                      href="/dashboard"
-                      onClick={closeMobile}
-                      className="w-full text-center py-3 rounded-md text-[15px] font-bold bg-[#0D3880] text-white"
-                    >
-                      Dashboard
+                    <Link href="/dashboard" onClick={closeMobile} className="w-full text-center py-3 rounded-md text-[15px] font-bold bg-[#0D3880] text-white">
+                      {t("nav_dashboard")}
                     </Link>
                   ) : (
                     <>
-                      <Link
-                        href="/join?mode=signin"
-                        onClick={closeMobile}
-                        className="w-full text-center py-3 rounded-md text-[15px] font-semibold border border-[#E8EDF4] text-[#0B1628]"
-                      >
-                        Sign in
+                      <Link href="/join?mode=signin" onClick={closeMobile} className="w-full text-center py-3 rounded-md text-[15px] font-semibold border border-[#E8EDF4] text-[#0B1628]">
+                        {t("nav_signin")}
                       </Link>
-                      <Link
-                        href="/join"
-                        onClick={closeMobile}
-                        className="w-full text-center py-3 rounded-md text-[15px] font-bold bg-[#0D3880] text-white"
-                      >
-                        Join now
+                      <Link href="/join" onClick={closeMobile} className="w-full text-center py-3 rounded-md text-[15px] font-bold bg-[#0D3880] text-white">
+                        {t("nav_join")}
                       </Link>
                     </>
                   )}
